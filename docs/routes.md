@@ -3,7 +3,7 @@ Written/designed by aidan F223129
 
 ## employee.php
 
-- [ ] **/employee/employee.php/employee/:EMP_ID:** (replace emp_id with @me for self)
+- [x] **/employee/employee.php/employee/:EMP_ID:** (replace emp_id with @me for self)
   - [x] GET (get employee)
   - [x] PATCH (edit employee)
     ```jsonc
@@ -97,7 +97,7 @@ Written/designed by aidan F223129
 
 - [x] **/employee/manager.php/mostsubscribedposts**
   - GET (return most subscribed posts ever)
-        ```jsonc
+    ```jsonc
     {
       "success":true,
       "data":[
@@ -112,7 +112,7 @@ Written/designed by aidan F223129
 
 - [x] **/employee/manager.php/mosthelpfulposts**
   - GET (return most helpful posts ever)
-        ```jsonc
+    ```jsonc
     {
       "success":true,
       "data":[
@@ -127,7 +127,7 @@ Written/designed by aidan F223129
 
 - [x] **/employee/manager.php/leasthelpfulposts**
   - GET (return least helpful posts ever)
-        ```jsonc
+    ```jsonc
     {
       "success":true,
       "data":[
@@ -301,7 +301,7 @@ Written/designed by aidan F223129
       }
       ```
 
-- [ ] **/project/project.php/project/:PROJECT_ID**
+- [x] **/project/project.php/project/:PROJECT_ID**
     - [x] GET (get individual project)
       ```jsonc
       {
@@ -314,7 +314,7 @@ Written/designed by aidan F223129
       }```
     - [x] PATCH (edit project)
     - [x] POST (new project - no id)
-    - [ ] DELETE (delete project)
+    - [x] DELETE (delete project)
 
 # wiki
 ## post.php
@@ -330,7 +330,7 @@ Written/designed by aidan F223129
     }
     ```
 
-- [ ] **/wiki/post.php/post/:POST_ID:**
+- [x] **/wiki/post.php/post/:POST_ID:**
   - [x] PUT /post/:POST_ID:/tags
     manages tags for a post {tags:[tagid1,tagid2]}
 
@@ -349,7 +349,7 @@ Written/designed by aidan F223129
     }
     ```
   - [x] PATCH (modify post)
-  - [ ] DELETE (delete post)
+  - [x] DELETE (delete post)
   - [x] POST (new post) {"title":string, "isTechnical":int(0/1), "content":string (images represented as {{img1}} for index 1), images:{index:base64imagedata}}
 
 - [x] **/wiki/post.php/meta/:POST_ID:**
