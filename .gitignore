@@ -1,0 +1,8 @@
+*/.vscode
+*/target
+*/Cargo.lock
+api/secrets.php
+api/composer.lock
+api/vendor/
+api/Roots.pem
+.DS_Store

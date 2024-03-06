@@ -1,0 +1,668 @@
+.main {
+    align-items: center;
+}
+
+.main > .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.tab {
+    text-decoration: none;
+    color: inherit;
+
+    &:focus-visible {
+        outline: none;
+    }
+}
+
+
+.tab-selector {
+    gap: 0.5em;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    font-size: 20px;
+    align-items: start;
+    color: #676666;
+    font-weight: 600;
+    user-select: none;
+    width: 100%;
+
+    background-color: white;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+}
+
+.tab {
+    display: flex;
+    cursor: pointer;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 12rem;
+    border-bottom: solid 2px transparent;
+}
+
+.tab:not(.active-tab):hover {
+    color: #000000;
+}
+
+.option {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 1rem 0.5rem;
+    gap: 0.5rem;
+
+    border-bottom: 1px solid var(--border-clr);
+
+    .name, .value {
+        display: flex;
+        color: var(--text-off-black, #0f0f0f);
+        font-weight: 600;
+        flex-wrap: nowrap;
+    }
+
+    .name {
+        user-select: none;
+        gap: 0.5rem;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        white-space: nowrap;
+    }
+}
+
+.change-password, .log-out{
+    cursor: pointer;
+}
+
+.option-title {
+    display:flex;
+    align-items: start;
+    font-weight: 600;
+    font-size: 1.5em;
+    margin-bottom: 0.5rem;
+}
+
+.option-subtitle {
+    display:flex;
+    align-items: start;
+    font-weight: 600;
+    font-size: 1.2em;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+
+}
+
+.active-tab {
+    background-color: rgb(244,244,244);
+    border-radius: 3px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    color: #000000;
+    font-weight: 600;
+    transition-duration: 0s;
+    border-bottom: solid 2px;
+    border-color: #ffc400;
+    transition: background-color 0.1s ease-out;
+
+    
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    max-width: 800px;
+    max-height: calc(100% - 110px);
+    margin-top: 1em;
+
+    background-color: white;
+    padding: 1rem;
+    border-radius: 6px;
+
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+
+    scrollbar-gutter: stable;
+}
+
+.account-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    width: 100%;
+
+    border-radius: 3px;
+    background-color: var(--make-it-all-tint);
+
+    .avatar-container {
+        width: 4rem;
+        height: 4rem;
+    }
+
+
+    .details {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0.25rem;
+        
+    }
+
+    .current-name {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .role-container {
+        margin-left: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: center;
+        justify-content: center;
+
+        .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            & span {
+                font-size: 32px;
+            }
+        }
+
+        .role {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+
+    }
+
+
+
+    
+}
+
+#user-icon-current {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    aspect-ratio: 1;
+}
+
+
+.name-display-input {
+    padding: 4px 6px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: inherit;
+    box-sizing: border-box;
+
+    font-size: 14px;
+    font-family: var(--font-family);
+
+    width: 100%; /* firefox has a different default width for input elements to chrome so this is here to override it */
+
+}
+
+.name-display-input::placeholder {
+    color: rgb(98, 111, 134);
+    user-select: none;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & input {
+        margin: 0;
+        line-height: normal;
+        width: 1rem;
+        height: 1rem;
+    }
+
+    & input:hover {
+        cursor: pointer;
+    }
+}
+
+#sort-tasks-type {
+    margin-left: auto;
+}
+
+#sort-projects-type {
+    margin-left: auto;
+}
+
+.password{
+    width: 50%;
+}
+
+.input-wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.textfield {
+    padding: 2px 8px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: inherit;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-family: var(--font-family);
+    outline: rgb(201, 201, 201) 2px solid;
+}
+
+.password:focus {
+    outline: rgb(119, 119, 119) 2px solid;
+    box-shadow: none;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width:  100%;
+    gap: 1em;
+}
+
+.user-search {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    height: 3.5em;
+    width: 100%;
+    padding: 0.5em;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-clr);
+    background-color: var(--white);
+    position: relative;
+}
+
+.results-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.employee-search-results {
+    .account-card {
+        background-color: var(--white);
+        border-radius: 0;
+        border-bottom: 1px solid var(--border-clr);
+        padding: 0.5rem;
+
+        .avatar-container {
+            width: 2.5rem;
+            height: 2.5rem;
+
+            .avatar {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }
+    
+    
+        .details {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 0;
+            
+        }
+    
+        .current-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .email {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+    
+        .role-container {     
+            opacity: 0.8;
+            width: 4rem;
+
+            .icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                & span {
+                    font-size: 28px;
+                }
+            }
+    
+            .role {
+                font-weight: 600;
+                font-size: 12px;
+            }
+    
+    
+        }
+    }
+
+    .account-card:first-child {
+        border-top: solid 1px var(--border-clr);
+    }
+
+    .account-card:hover {
+        background-color: var(--make-it-all-tint);
+    }
+}
+
+#inputField {
+    display: block;
+    width: 100%;
+    height: 2.5em;
+    padding: 0.5em;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    font-family: var(--font-family);
+    color: #2d2e30;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+#inputField:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.employee-card {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    border-bottom: 1px solid var(--border-clr);
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 0.5em;
+}
+
+.employee-card:hover {
+    background-color: #cacaca;
+    cursor: pointer;
+    border-radius: 0.3em;
+}
+
+.table-headers{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 1em;
+    border-bottom: 3px solid black;
+    font-weight: 600;
+}
+
+.buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    justify-content: flex-end;
+
+}
+
+.editable{
+    border: rgb(124, 124, 124) 1px solid;
+    width: 80%;
+    border-radius: 0.2em;
+    cursor: text;
+}
+.error-message{
+    color: rgb(190, 16, 16);
+    font-size: 14px;
+    font-weight: 600;
+    min-height:1.5em;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.avatar-change-content {
+    width: 100%;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .avatar-container {
+        width: 15rem;
+        height: 15rem;
+        position: relative;
+
+        .avatar-preview {
+            width:100%;
+            height:100%;
+        }
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 71%, white 71%, white 72%, #000000b0 71%, #000000d0 90%, #000000ff 100%);
+            border-radius: 8px;
+        }
+    }
+    .avatar-upload {
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 1em;
+    }
+    #image-upload {
+        display: none;
+    }
+}
+
+label {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1;
+}
+
+#name {
+    width: 100%;
+    height: 100%;
+}
+
+#email {
+    width: 100%;
+    height: 100%;
+}
+
+#password {
+    width: 100%;
+    height: 100%;
+    padding-right: 42px;
+}
+
+.textfield {
+    padding: 2px 8px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: inherit;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-family: var(--font-family);
+    width: 100%;
+}
+
+#togglePassword {
+    cursor: pointer;
+    position: absolute;
+    right: 6px;
+
+    user-select: none;
+
+    color: rgb(98, 111, 134);
+}
+
+#togglePassword:hover {
+    color: black;
+}
+
+.register-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.first-and-last-name {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#name-container {
+    display: flex;
+    flex-direction: column;
+    width: 9.5em;
+}
+
+#register {
+    width: 100%;
+    margin-top: 4px;
+    height: 38px;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.textfield-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 38px;
+    width: 100%;
+    border: solid 2px rgb(208, 212, 218);
+    border-radius: 4px;
+    font-size: 14px;
+    color: black;
+    background-color: white;
+    transition: border-color 0.2s ease-in-out;
+    position: relative;
+}
+
+.textfield-container:focus-within {
+    border-color: #388bffaa;
+
+    & span {
+        color: black;
+    }
+}
+
+.password-criteria {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-top: 8px;
+    
+
+    .material-symbols-rounded {
+        font-size: 24px;
+    }
+
+    & ul {
+        margin-bottom: 8px;
+        font-size: 14px;
+        padding-left: 2rem;
+    }
+
+    & li {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 6px;
+        padding-top: 0.1rem;
+        padding-bottom: 0.1rem;
+        font-weight: 500;
+        line-height: 1.5;
+        transition: color 0.15s ease-out;
+    }
+}
+
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-2%);
+    transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+}
+
+#status {
+    font-weight: 500;
+    text-align: center;
+
+    border-radius: 8px; 
+    padding: 1em;
+}
+
+.disabled {
+    opacity: 0.5;
+    transition: opacity 0.15s ease-out;
+}
+
+.popup-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    width: min(300px, 100%);
+}
+
+.modal-dialog #modal-content {
+    align-items: center !important;
+}
+
+.textfield-password {
+    height: 100%;
+}

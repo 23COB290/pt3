@@ -1,0 +1,511 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+
+    <title>UI Elements</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tooltip.css">
+
+    <link rel="stylesheet" href="all.css">
+
+    <!-- flatpickr.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" 
+    integrity="sha512-MQXduO8IQnJVq1qmySpN87QQkiR1bZHtorbJBD0tzy7/0U9+YIC93QWHeGTEoojMVHWWNkoCp8V6OzVSYrX0oQ==" 
+    crossorigin="anonymous" 
+    referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/themes/confetti.min.css" 
+    integrity="sha512-8jhXB3DrPNvbKByNPK8o+RgTDjtFEsjxIUgFTsGtD2Rf13GIu7WJDOjos8WTIoOmRp4irOWyMvPsOnGlwl2nKA==" 
+    crossorigin="anonymous" 
+    referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js" 
+    integrity="sha512-K/oyQtMXpxI4+K0W7H25UopjM8pzq0yrVdFdG21Fh5dBe91I40pDd9A4lzNlHPHBIP2cwZuoxaUSX0GJSObvGA==" 
+    crossorigin="anonymous" 
+    referrerpolicy="no-referrer"></script>
+    
+    <script src="task-card.js" defer></script>
+    <script src="number-picker.js" defer></script>
+    <script src="date-picker.js" defer></script>
+    <script src="context-menu.js" defer></script>
+  </head>
+  <body>
+<body>
+    <div class="container">
+        <div class="search">
+            <input class="search-input" type="text" autocomplete="off" placeholder="Search Board">
+
+            </input>
+            <div class="search-icon">
+                <span class="material-symbols-rounded">search</span>
+            </div>
+            <div class="search-icon clear-icon" stlye="display: none;">
+                <span class="material-symbols-rounded">close</span>
+            </div>
+        </div>
+
+        <div class="dropdown" tabindex="0">
+            <div class="dropdown-text">
+                Dropdown List
+            </div>
+            <div class="dropdown-chevron">
+                <span class="material-symbols-rounded">
+                    expand_more
+                </span>
+            </div>
+            <div class="dropdown-list">
+                <div class="dropdown-option">Option 1</div>
+                <div class="dropdown-option">Option 2</div>
+                <div class="dropdown-option">Option 3</div>
+            </div>
+        </div>
+        <div class="dropdown" tabindex="0">
+            <div class="dropdown-text">
+                Dropdown Menu
+            </div>
+            <div class="dropdown-chevron">
+                <span class="material-symbols-rounded">
+                    expand_more
+                </span>
+            </div>
+            <div class="dropdown-menu">
+                <div class="dropdown-option">Option 1</div>
+                <div class="dropdown-option">Option 2</div>
+                <div class="dropdown-option">Option 3</div>
+            </div>
+        </div>
+        <div class="text-button">
+            <div class="button-icon">
+                <span class="material-symbols-rounded">
+                    add
+                </span>
+            </div>
+            <div class="button-text">
+                Add
+            </div>
+        </div>
+        <div class="text-button">
+            <div class="button-icon">
+                <span class="material-symbols-rounded">
+                    mail
+                </span>
+            </div>
+            <div class="button-text">
+                Invite
+            </div>
+        </div>
+        <div class="text-button">
+            <div class="button-icon">
+                <span class="material-symbols-rounded">
+                    more_horiz
+                </span>
+            </div>
+            <div class="button-text">
+                More
+            </div>
+        </div>
+        <div class="text-button">
+            <div class="button-icon"></div>
+            <div class="button-text">
+                Button with No Icon
+            </div>
+        </div>
+        <div class="icon-button tooltip tooltip-under">
+            <p class="tooltiptext">Add a new task</p>
+            <div class="button-icon">
+                <span class="material-symbols-rounded">
+                    add
+                </span>
+            </div>
+        </div>
+        <div class="icon-button">
+            <div class="button-icon">
+                <span class="material-symbols-rounded">
+                    mail
+                </span>
+            </div>
+        </div>
+        <div class="icon-button">
+            <div class="button-icon">
+                <span class="material-symbols-rounded">
+                    more_horiz
+                </span>
+            </div>
+        </div>
+        <div class="icon-button">
+            <div class="button-icon">
+                <span class="material-symbols-rounded">
+                    edit
+                </span>
+            </div>
+        </div>
+        <div class="icon-button no-box">
+            <div class="button-icon">
+                <span class="material-symbols-rounded">
+                    edit_note
+                </span>
+            </div>
+        </div>
+        <div class="small-icon context-menu">
+            <span class="material-symbols-rounded">
+                more_horiz
+            </span>
+            <div class="context-menu-popover visible">
+                <div class="item">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            edit
+                        </span>
+                    </div>
+                    <div class="text">
+                        Edit
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            delete
+                        </span>
+                    </div>
+                    <div class="text">
+                        Delete
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="item">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            share
+                        </span>
+                    </div>
+                    <div class="text">
+                        Open in new tab
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            visibility
+                        </span>
+                    </div>
+                    <div class="text">
+                        Copy link
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            file_download
+                        </span>
+                    </div>
+                    <div class="text">
+                        Download
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="taskcolumn">
+            <div class="task" draggable="true">
+                <div class="draggable">
+                    <span class="material-symbols-rounded">
+                        drag_indicator
+                    </span>
+                </div>
+                <div class="title">
+                    Make a proper consistent task card element
+                </div>
+                <div class="description">
+                    There's weird spacing in the existing one which makes it a nightmare to work with
+                </div>
+                <div class="date-and-users">
+                    <div class="tooltip  tooltip-under status-container">
+                        <p class="tooltiptext">Task overdue</p>
+                        <span class="material-symbols-rounded overdue">
+                            error
+                        </span>
+                        <div class="date">
+                            28th Nov 2023
+                        </div>
+                    </div>
+                    <div class="users-assigned">
+                        <div class="assignment tooltip tooltip-under"><p class="tooltiptext">Octavian Iacovici</p>
+                            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip tooltip-under"><p class="tooltiptext">Danial</p>
+                            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip tooltip-under"><p class="tooltiptext">Jamie Skitt</p>
+                            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task" draggable="true">
+                <div class="title">
+                    Less clutter version overdue
+                </div>   
+                <div class="date-and-users">
+                    <div class="tooltip tooltip-under status-container">
+                        <p class="tooltiptext">Task overdue</p>
+                        <span class="material-symbols-rounded overdue">
+                            error
+                        </span>
+                        <div class="date">
+                            28th Nov 2023
+                        </div>
+                    </div>
+                    <div class="users-assigned">
+                        <div class="assignment tooltip tooltip-under"><p class="tooltiptext">Octavian Iacovici</p>
+                            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip tooltip-under"><p class="tooltiptext">Danial</p>
+                            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip tooltip-under"><p class="tooltiptext">Jamie Skitt</p>
+                            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task" draggable="true">
+                <div class="title">
+                    Less clutter version
+                </div>   
+                <div class="date-and-users">
+                    <div class="tooltip tooltip-under status-container">
+                        <p class="tooltiptext">Due 19th November</p>
+                        <span class="material-symbols-rounded">
+                            event_upcoming
+                        </span>
+                        <div class="date">
+                            28th Nov 2023
+                        </div>
+                    </div>
+                    
+                    <div class="users-assigned">
+                        <div class="assignment tooltip tooltip-under"><p class="tooltiptext">Octavian Iacovici</p>
+                            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip tooltip-under"><p class="tooltiptext">Danial</p>
+                            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip tooltip-under"><p class="tooltiptext">Jamie Skitt</p>
+                            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="search-dropdown" tabindex="0">
+            <div class="search">
+                <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+    
+                </input>
+                <div class="search-icon">
+                    <span class="material-symbols-rounded">search</span>
+                </div>
+                <div class="search-icon clear-icon">
+                    <span class="material-symbols-rounded">close</span>
+                </div>
+            </div>
+            <div class="popover">
+                <div class="employee-list">
+                    <div class="name-card">
+                        <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        <span>Jamie Skitt</span>
+                        <span class="material-symbols-rounded icon">
+                            person_add
+                        </span>
+                    </div>
+                    <div class="name-card">
+                        <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        <span>Octavian Iacovici</span>
+                        <span class="material-symbols-rounded icon">
+                            person_add
+                        </span>
+                    </div>
+                    <div class="name-card">
+                        <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        <span>Danial</span>
+                        <span class="material-symbols-rounded icon">
+                            person_add
+                        </span>
+                    </div>
+                    <div class="name-card">
+                        <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        <span>Jamie Skitt</span>
+                        <span class="material-symbols-rounded icon">
+                            person_add
+                        </span>
+                    </div>
+                    <div class="name-card">
+                        <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        <span>Jamie Skitt</span>
+                        <span class="material-symbols-rounded icon">
+                            person_add
+                        </span>
+                    </div>
+                </div>
+                <div class="show-more text-button">
+                    <div class="button-icon">
+                        <span class="material-symbols-rounded">
+                            more_horiz
+                        </span>
+                    </div>
+                    <div class="button-text">
+                        Show More
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notification-popover">
+            <div class="icon-button">
+                <div class="button-icon">
+                    <span class="material-symbols-rounded">
+                        inbox
+                    </span>
+                </div>
+            </div>
+            <div class="popover-content">
+                <div class="title">
+                    Activity
+                </div>
+                <div class="content">
+                    <a class="notification-card" href="https://google.com">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                assignment_add
+                            </span>
+                        </div>
+                        <div class="details">
+                            <div class="name-card">
+                                <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                                <span>Jamie Skitt</span>
+                            </div>
+                            <div class="text">Assigned you a task in <span>A Project</span></div>
+                        </div>
+                        <div class="arrow">
+                            <span class="material-symbols-rounded">
+                                open_in_new
+                            </span>
+                        </div>
+                        <div class="time">Now</div>
+                    </a>
+                    <a class="notification-card" href="https://google.com">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                check_circle
+                            </span>
+                        </div>
+                        <div class="details">
+                            <div class="name-card">
+                                <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                                <span>Jamie Skitt</span>
+                            </div>
+                            <div class="text">Finished <span>Task 1</span> in <span>A Project</span></div>
+                        </div>
+                        <div class="arrow">
+                            <span class="material-symbols-rounded">
+                                open_in_new
+                            </span>
+                        </div>
+                        <div class="time">5h ago</div>
+                    </a>
+                    <a class="notification-card" href="https://google.com">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                monitoring
+                            </span>
+                        </div>
+                        <div class="details">
+                            <div class="name-card">
+                                <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                                <span>Jamie Skitt</span>
+                            </div>
+                            <div class="text">Started <span>Task 1</span> in <span>A Project</span></div>
+                        </div>
+                        <div class="arrow">
+                            <span class="material-symbols-rounded">
+                                open_in_new
+                            </span>
+                        </div>
+                        <div class="time">3d ago</div>
+                    </a>
+                    <a class="notification-card" href="https://google.com">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                group_add
+                            </span>
+                        </div>
+                        <div class="details">
+                            <div class="name-card">
+                                <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                                <span>Jamie Skitt</span>
+                            </div>
+                            <div class="text">Added you to <span>A Project</span></div>
+                        </div>
+                        <div class="arrow">
+                            <span class="material-symbols-rounded">
+                                open_in_new
+                            </span>
+                        </div>
+                        <div class="time">3d ago</div>
+                    </a>
+                    <a class="notification-card">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                add_box
+                            </span>
+                        </div>
+                        <div class="details">
+                            <div class="name-card">
+                                <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                                <span>Jamie Skitt</span>
+                            </div>
+                            <div class="text">Created <span>A Project</span></div>
+                        </div>
+                        <div class="arrow">
+                            <span class="material-symbols-rounded">
+                                open_in_new
+                            </span>
+                        </div>
+                        <div class="time">30th November</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="number-picker">
+            <div class = "stepper decrement" tabindex="0">
+                <span class="material-symbols-rounded">
+                    remove
+                </span>
+            </div>
+
+            <input type="number" class="number-input" value="1" min="0" tabindex="0">
+
+            <div class="stepper increment" tabindex="0">
+                <span class="material-symbols-rounded">
+                    add
+                </span>
+            </div>
+        </div>
+        <div class="date-picker">
+            <div class="date-picker-icon">
+                <span class="material-symbols-rounded">event</span>
+            </div>
+            <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
+        </div>
+        
+    
+    </div>
+</body>
+  </body>
+</html>
+ 

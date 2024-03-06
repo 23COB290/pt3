@@ -1,0 +1,147 @@
+.text-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    height: 32px;
+    padding: 0 10px;
+
+    color: #292c31;
+    background-color: #ebecee;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+
+    border-radius: 3px;
+
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.1s ease-out;
+    transition: opacity 0.15s ease-out;
+
+    .button-text {
+        margin: 0 2px;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .button-icon {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        justify-items: center;
+    
+        padding: 4px;
+        padding-left: 5px;
+        padding-right: 5px;
+    
+        & span {
+            font-size: 22px;
+            line-height: 1;
+        }
+    }
+
+    .button-icon:empty {
+        padding: 0;
+        padding-left: 5px;
+    }
+}
+
+.text-button:has(.button-icon) {
+    padding-left: 0;
+}
+
+
+
+.text-button.blue {
+    background-color: #2d8aff;
+    color: white;
+}   
+
+.text-button.red {
+    background-color: #ffddd3;
+    color: #421212;
+}
+
+.text-button.white {
+    background-color: white;
+    color: #292c31;
+    outline: solid 1px var(--border-clr);
+}
+
+
+
+.text-button.red.text-button.disabled {
+    background-color: #c4c9d2;
+    color: white;
+}
+
+
+.text-button.no-box {
+    background-color: transparent;
+}
+
+
+
+@media only screen and (min-width: 600px) {
+
+    .text-button:hover {
+        background-color: #dcdfe4;
+        transition: background-color 0.05s ease-out;
+    }
+
+    .text-button.blue:hover {
+        background-color: #2477fb;
+    }
+    
+    .text-button.no-box:hover {
+        background-color: #f1f2f4;
+    }
+
+    .text-button.white:hover {
+        background-color: #f1f2f4;
+    }
+
+    .text-button.red:hover {
+        background-color: #d51e00;
+        color: white;
+    }
+
+    .text-button.red:active {
+        background-color: #ffbbb0;
+        color: white;
+    }
+    
+    .text-button.no-box:active {
+        background-color: #dcdfe4;
+    }
+
+}
+
+.text-button.blue:active {
+    background-color: #1254a0;
+}
+
+.text-button:active {
+    background-color: #c4c9d2;
+    transition: background-color 0.05s ease-out;
+}
+
+.text-button.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.15s ease-out;
+}
+
+.text-button:not(:has(.button-text)) {
+    padding: 0;
+    aspect-ratio: 1;
+}
+
+
+
+
+

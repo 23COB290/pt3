@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="../global-styles.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+
+    <link rel="stylesheet" href="/ui-elements/all.css">
+
+    <script src="/global-api.js"></script>
+    <script src="/global-ui.js" defer type="module"></script>
+    <script defer src="client.js" type="module"></script>
+</head>
+<body>
+    <div class="fullscreen">
+        <img src="https://cdn.013.team/assets/wordmark-large.png" alt="logo" class="logo">
+        <div class="box register-box">
+            
+            <h1>Register</h1>
+            <div class="register-container">
+                <div class="input-container">
+                    <label for="first-name">First Name</label>
+                    <div class="textfield-container">
+                        <input type="text" placeholder="" autocomplete="given-name"  id="first-name" class="textfield">
+                    </div>
+                </div>
+                <div class="input-container">
+                    <label for="last-name">Last Name</label>
+                    <div class="textfield-container">
+                        <input type="text" placeholder="" autocomplete="family-name"  id="last-name" class="textfield" required>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <label for="email">Email</label>
+                    <div class="textfield-container">
+                        <input type="email" placeholder="example@email.com" id="email" class="textfield" required autocomplete="off">
+                    </div>
+                </div>
+                <div class="input-container">
+                    <label for="password">Password</label>
+                    <div class="textfield-container">
+                        <input type="password" placeholder="" id="password" class="textfield" required autocomplete="off">
+                        <span class="material-symbols-rounded" id="togglePassword">
+                            visibility_off
+                        </span>
+                    </div>
+                </div>
+                <div class="password-criteria disabled">
+                    Your password must contain:
+                    <ul class="password-criteria">
+                        <li id="ten-chars">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 10 characters
+                            </div>
+                        </li>
+                        <li id="uppercase-letter">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 1 uppercase letter
+                            </div>
+                        </li>
+                        <li id="number">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 1 number
+                            </div>
+                        </li>
+                        <li id="special-char">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 1 special character
+                            </div>
+                        </li>
+                      </ul>
+                </div>
+                <div class="login-prompt">Already have an account? <a href="/">Sign in</a></div>
+                <div id="register" class="text-button blue disabled">
+                    <div class="button-text">
+                        Register
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="status" class="box hidden"></div>
+    </div>
+</body>
+</html>

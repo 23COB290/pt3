@@ -1,0 +1,63 @@
+.number-picker {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border-radius: 3px;
+    border: none;
+    width: min-content;
+}
+
+.stepper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.1s ease-out;
+    color: var(--icon-clr);
+}
+
+.stepper:hover {
+    background-color: rgb(253, 253, 253);
+    outline: solid 1px rgba(0,0,0,0.1);
+}
+
+.stepper:active {
+    background-color: white;
+    outline: none;
+}
+
+.number-input {
+    text-align: center;
+    border: none;
+    border-radius: 3px;
+    padding: 2px;
+    width: 42px;
+    height: 32px;
+
+    font-family: var(--font-family);
+    font-size: 15px;
+    font-weight: 600;
+
+    border: solid 2px #dcdfe4;
+}
+
+.number-input:focus {
+    outline: none;
+}
+
+.number-input:hover {
+    cursor: pointer;
+    
+}
+
+/* remove the up and down arrows */
+.number-input::-webkit-outer-spin-button,
+.number-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

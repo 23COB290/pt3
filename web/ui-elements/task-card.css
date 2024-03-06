@@ -1,0 +1,259 @@
+
+
+.task {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 1.5em);
+    border-radius: 4px;
+    outline: solid 1px rgba(105,112,125, 0.1);
+    background-color: white;
+    color: black;
+    box-shadow: 0 3px 3px rgba(0,0,0,0.1);
+    padding: 0.55em;
+    padding-bottom: 0.35em;
+    padding-top: 0.35em;
+    padding-right: 0.35em;
+    cursor: pointer;
+    transition: transform 0.05s ease-in-out !important; /* allowing this important, task cards have a very different click animation */
+    transition: color 0.1s ease-out;
+    .title {
+        font-size: 1em;
+        font-weight: 600;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.5em;
+        padding-bottom: 2px;
+    }
+    .date {
+        font-size: 0.85em;
+        text-wrap: nowrap;
+        font-weight: 600;
+        color: #0f0f0faa;
+        line-height: 24px;
+        
+    }
+    .description {
+        text-overflow: ellipsis;
+        text-wrap: nowrap;
+        overflow: hidden;
+        font-size: 0.9em;
+        font-weight: 600;
+        color: #0f0f0fbb;
+        max-width:80%;
+        padding-bottom: 4px;
+    }
+    .overdue {
+        color: var(--overdue-red);
+        background-color: var(--overdue-red-bg);
+
+        & span {
+            color: var(--overdue-red);
+        }
+
+        .date {
+            color: var(--overdue-red);
+            font-weight: 600;
+        }
+
+    }
+    .assignment {
+        align-self: normal;
+        margin-left: -0.4em;
+        display: flex;
+    }
+    
+    
+    
+}
+
+
+.task-context-menu-button {
+    opacity: 0;
+    color: #777777;
+    & span {
+        color: #777777;
+        font-size: 26px;
+    }
+}
+
+.task:hover .small-icon {
+    transition: opacity 0.1s ease-out;
+    opacity: 1;
+}
+
+.task:has(.status-container) {
+    padding-bottom: 0.55em;
+}
+
+
+
+
+
+
+.date-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+
+    
+}
+
+.description-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.5em;
+    
+    & span {
+        color: #2f2f2f;
+    }
+}
+
+
+.status-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding-right: 0.2em;
+    gap: 0.2rem;
+
+    font-size: 14px;
+    white-space: nowrap;
+
+    border-radius: 3px;
+    background-color: #f4f4f4;
+    transition: background-color 0.1s ease-in-out;
+
+    & span {
+        color: #2f2f2f;
+        font-size: 16px;
+        padding-left: 2px;
+    }
+}
+
+.status-container:hover {
+    cursor: pointer;
+    background-color: #d9d9d9;
+}
+
+.task-info {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 1.5em;
+    gap: 0.5em;
+
+}
+
+.task-info > .status-container:first-of-type {
+    .tooltiptext {
+        top: 0%;
+        left: 115%;
+        transform: translate(0, -50%);
+    }
+
+    .tooltiptext::after {
+        top: 50%;
+        left: -4px;
+        margin-top: -5px;
+        border-style: solid;
+        border-color: transparent #2f2f2fcc transparent transparent;
+    }
+}
+
+.urgent {
+    font-size: 0.85em;
+    color: #c04646aa;
+    display: flex;
+    align-items: center;
+};
+
+
+.draggable {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    color: #777777;
+    font-size: 1em;
+    cursor: grab;
+    transition: 0.2s ease-out;
+}
+.task:hover>.draggable {
+    color: #0f0f0f;
+    transition-duration: 0.08s;
+}
+.task:hover {
+    color: #0f0f0f;
+    background-color: #ffffffcc;
+    transition-duration: 0.08s;
+    transition: color 0.1s ease-out;
+}
+
+.expanded {
+    transition-duration: 0.5s;
+    .description {
+        display: block;
+        overflow: visible;
+        height: auto;
+        text-wrap: wrap;
+    }
+}
+
+.dragindicator {
+    color: #000;
+    background-color: #fff;
+}
+
+.task-avatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: solid 1px white;
+    transition: 0.1s ease-out;
+    z-index: 0;
+}
+
+.users-assigned {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    height: 1.5em;
+    aspect-ratio: 1;
+    width: 100%;
+
+}
+
+
+
+
+.beingdragged {
+    opacity: 0.5;
+    cursor: grabbing;
+    box-shadow: 0 0 3px 2px rgba(94, 137, 255, 1), 0 0 2px 1px rgba(94, 137, 255, 0.8) inset;
+    outline: solid 2px rgba(94, 137, 255, 1);
+}
+
+.task-focussed {
+    outline: solid 2px #388bffaa;
+}
+
+.manhours {
+    font-size: 0.85em;
+    text-wrap: nowrap;
+    font-weight: 600;
+    color: #0f0f0faa;
+    line-height: 24px;
+}
+
+.manhours-container {
+    font-weight: 600;
+    display: flex;
+    flex-direction: row;
+}

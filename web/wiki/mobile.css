@@ -1,0 +1,38 @@
+@media only screen and (max-width: 600px) {
+
+    body {
+        min-height: 100dvh;
+        background-color: var(--light-grey-bg);
+    }
+
+    .fullscreen {
+        height: auto;
+    }
+    
+    .left-nav {
+        display: none;
+    }
+
+    .right-nav {
+        display: none;
+    }
+
+    .delete {
+        z-index: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .posts {
+        width: 100%;
+    }
+
+    #mobile-category {
+        display: flex;
+    }
+}

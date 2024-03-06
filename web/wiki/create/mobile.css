@@ -1,0 +1,77 @@
+@media only screen and (max-width: 600px) {
+
+    .left-nav {
+        display: none;
+    }
+
+    .right-nav {
+        display: none;
+    }
+
+    .delete {
+        z-index: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    #page-title {
+        display: none;
+    }
+
+    .type-of-post {
+        width: 100%;
+    }
+
+    .category {
+        width: 100%;
+    }
+
+    .post {
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+
+    .options {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .items {
+        width: 100%;
+        height: auto;
+        gap: 0.5rem;
+    }
+
+    .post-container {
+        gap: 0.5rem;
+        margin-top: 0;
+        padding-top: 0.5rem;
+        width: calc(100% - 1rem);
+    }
+
+    #editor {
+        max-height: calc(100dvh - 26rem);
+    }
+
+    .ql-toolbar.ql-snow {
+        padding-left: 0;
+        padding-right: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: clip;
+    }
+
+    .ql-toolbar.ql-snow .ql-formats {
+        margin-right: 0;
+        white-space: nowrap;
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+}

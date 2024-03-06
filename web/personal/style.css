@@ -1,0 +1,446 @@
+/* this also contains the page title to save space for more personal items on the screen */
+.controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    gap: 0.5rem;
+    margin: 1rem 0;
+
+    width: calc(100% - 3rem);
+    align-self: center;
+
+    .title {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .search {
+        width: 100%;
+        max-width: 300px;
+        margin-left: auto;
+    }
+
+    #new-personal {
+    
+    }
+    
+}
+
+#personals-sort {
+    min-width: 10rem;
+    margin-left: auto;
+    .dropdown-menu {
+        border: none;
+        border-radius: 3px;
+        width: 100%;
+        
+    }
+
+    .dropdown-option {
+        font-weight: 400;
+        
+        .option-icon {
+            margin-right: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            & span {
+                font-size: 18px;
+                color: #686a6e;
+            }
+        }
+    }
+
+    .selected {
+        background-color: #f1f2f4;
+        color: #172d5b;
+        opacity: 0.5;
+        pointer-events: none;
+
+        .dropdown-icon {
+            pointer-events: none;
+        }
+
+        .dropdown-text {
+            pointer-events: none;
+        }
+        
+    }
+
+    .dropdown-chevron {
+        & span {
+            color: #686a6e
+        }
+    }
+    
+}
+
+#personals-sort-direction {
+    border: none;
+    border-bottom: solid 2px #dcdfe4;
+    background-color: white;
+}
+
+#personals-sort-direction:hover {
+    background-color: #f1f2f4;
+    transition: background-color 0.1s ease-out, border-color 0.05s ease-out;
+}
+
+#personals-sort-direction:active {
+    background-color: #dcdfe4;
+    transition: background-color 0.05s ease-out, border-color 0.05s ease-out;
+}
+
+.list-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: calc(100% - 10px);
+    margin-left: auto;
+    overflow-y: scroll;
+
+    .header {
+        margin-left: 1rem;
+        width: calc(100% - 2rem);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.5rem;
+
+        .title {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            user-select: none;
+            gap: 0.5rem;
+            transition: padding 0.1s ease-out;
+        }
+
+        .title:hover {
+            cursor: pointer;
+            background-color: var(--make-it-all-tint);
+            color: var(--make-it-all);
+            border-radius: 3px;
+            padding-left: 0.5rem;
+            padding-right: 0.25rem;
+            transition: padding 0.05s ease-out;
+
+            .title-chevron {
+                background-color: transparent;
+                color: var(--make-it-all);
+
+                & span {
+                    color: var(--make-it-all);
+                }
+            }
+        }
+
+        .title-chevron:active {
+            outline: none;
+        }
+
+        .title-text {
+            font-size: 18px;
+            font-weight: 500;
+        }
+    }
+
+    
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    gap: 0.5rem;
+    margin: 1rem 0;
+    margin-top: 0.5rem;
+
+    width: calc(100% - 2rem);
+    align-self: center;
+}
+
+.list.collapsed {
+    margin-bottom: 1.5rem;
+    .personal-task:not(:first-child) {
+        display: none;
+    }
+
+    .personal-task {
+        box-shadow: #f6f8fa 0px 20px 50px 0px,
+        rgba(0, 0, 0, 0.1) 0px 2px 4px,
+        rgb(252, 252, 252) 0px 8px 0px -1px, 
+        rgba(0, 0, 0, 0.1) 0px 10px 4px -1px, 
+        rgb(252 252 252) 0px 16px 0px -2px, 
+        rgb(0 0 0 / 10%) 0px 19px 12px -2px;
+        
+        opacity: 0.5;
+        pointer-events: none;
+    }
+}
+
+.personal-task {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    padding-right: 0.5rem;
+    
+    width: 100%;
+
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.05s ease-out;
+
+    .personal-checkbox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & input {
+            margin: 0;
+            line-height: normal;
+            width: 1rem;
+            height: 1rem;
+        }
+
+        & input:hover {
+            cursor: pointer;
+        }
+    }
+
+    .personal-main {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        gap: 1rem;
+
+        width: 100%;
+
+        user-select: none;
+    }
+
+    .save {
+        margin-left: auto;
+    }
+
+    .personal-title {
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    .title-text {
+        line-height: 1.5;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+        border-radius: 2px;
+    }
+
+    .add-description {
+        opacity: 0;
+        transition: opacity 0.1s ease-out;
+
+        & span {
+            font-size: 20px;
+        }
+    }
+
+    .personal-chevron {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & span {
+            font-size: 22px;
+            color: var(--icon-clr);
+        }
+    }
+
+    .personal-icons {
+        opacity: 0;
+        transition: opacity 0s ease-out;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        gap: 0.5rem;
+        margin-left: auto;
+
+        .icon-button:hover {
+            background-color: white;
+        }
+
+    }
+
+    
+
+    .personal-description {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+
+        visibility: hidden;
+        height: 0;
+        width: 0;
+        transition: visibility 0.1s ease-out, height 0.1s ease-out, width 0.1s ease-out;
+    }
+
+}
+
+.personal-task:hover {
+    background-color: var(--make-it-all-tint);
+    cursor: pointer;
+    transition: background-color 0.1s ease-out;
+
+    .personal-icons {
+        opacity: 1;
+        transition: opacity 0.05s ease-out;
+    }
+
+
+}
+
+.edit-mode {
+
+    .add-description {
+        opacity: 1;
+        transition: opacity 0.1s ease-out;
+        visibility: visible;
+        height: auto;
+        width: auto;
+    }
+
+}
+
+#dummy {
+
+    .personal-content {
+        flex-grow: 1;
+    }
+    
+    .dummy-add-icon {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        & span {
+            font-size: 22px;
+            color: var(--icon-clr);
+        }
+    }
+
+    & input {
+        font-family: var(--font-family);
+        font-size: 14px;
+        font-weight: 400;
+        border: none;
+        outline: none;
+        background-color: transparent;
+
+        width: 100%;
+        height: 100%;
+    }
+}
+
+
+.personal-task:active {
+    background-color: #1673f511;
+    transition: background-color 0.1s ease-out;
+}
+
+.personal-task.selected {
+    outline: solid 2px #388bffaa;
+}
+
+.no-results {
+    margin-right: auto;
+    opacity: 0.8;
+}
+
+.mobile-search-icon {
+    display: none;
+
+}
+
+#mobile-search-input {
+    width: 0;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+
+
+#mobile-search-icon {
+    display: none;
+}
+
+.no-results {
+    margin-right: auto;
+    opacity: 0.8;
+}
+
+#mobile-search-input {
+    width: 0;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+
+#mobile-new-personal {
+    display: none;
+}
+
+[contenteditable]:empty:after {
+    content: attr(placeholder);
+    color: #aaaaaa;
+    font-weight: 400;
+}
+
+[contenteditable]:focus {
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+}
+
+[contenteditable]:focus:hover {
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+}
+
+
+.date-picker-input {
+    font-weight: 400;
+    color: rgba(0,0,0,0.5);
+    background-color: transparent;
+    width: min-content;
+}
+
+.date-picker {
+    border: solid 2px transparent;
+    background-color: transparent;
+    border-radius: 4px;
+}
+
+.date-picker-icon {
+    color: rgba(0,0,0,0.5);
+}
+
+.date-picker:hover {
+    background-color: transparent;
+}

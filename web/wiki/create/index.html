@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title id="title">Create Post</title>
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css"
+        integrity="sha512-/FHUK/LsH78K9XTqsR9hbzr21J8B8RwHR/r8Jv9fzry6NVAOVIGFKQCNINsbhK7a1xubVu2r5QZcz2T9cKpubw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"
+        integrity="sha512-P2W2rr8ikUPfa31PLBo5bcBQrsa+TNj8jiKadtaIrHQGMo6hQM6RdPjQYxlNguwHz8AwSQ28VkBK6kHBLgd/8g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="client.js" type="module"></script>
+    <link rel="stylesheet" href="/global-styles.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+
+    <link rel="stylesheet" href="/ui-elements/all.css">
+
+    <link rel="stylesheet" href="/wiki/tag.css">
+    <script src="/global-ui.js" type="module"></script>
+    <script src="/global-api.js"></script>
+</head>
+
+<body>
+    <div class="fullscreen">
+
+        <header class="topbar"></header>
+
+        <div class="sidebar-container sidebar-open">
+
+            <div class="sidebar"></div>
+
+            <div class="main">
+                <div class="post-container">
+                    <div class="items">
+                        <div id="page-title" class="title">
+                            Create Post
+                        </div>
+                        <div class="type-of-post">
+                            <div class="category" tabindex="0">
+                                <input type="radio" name="category" id="technical" value="1" class="norender" checked>
+                                <label for="technical">
+                                    <div class="icon">
+                                        <span class="material-symbols-rounded">
+                                            terminal
+                                        </span>
+                                    </div>
+                                    <div class="name">
+                                        Technical
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="category" tabindex="0">
+                                <input type="radio" name="category" id="non-technical" value="0" class="norender">
+                                <label for="non-technical">
+                                    <div class="icon">
+                                        <span class="material-symbols-rounded">
+                                            newsstand
+                                        </span>
+                                    </div>
+                                    <div class="name">
+                                        Non-Technical
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="items">
+                        <div class="ui-card tight">
+                            <input id="post-title-input" type="text" class="text-input" placeholder="Post title ...">
+                        </div>
+                        <div class="text-button white" id="add-tags-button">
+                            <div class="button-text">
+                                Post Topics
+                            </div>
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">box_add</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="editor-container">
+                        <div id="editor">
+                            <!-- quill.js goes here -->
+                        </div>
+                    </div>
+
+                    <div class="submit-row">
+                        <div class="ui-card" id="listOfTags">
+                            <span class="material-symbols-rounded" id="placeholderTag">sell</span>
+                            <div class="empty-state">
+                                Topics you add appear here
+                            </div>
+                            <div class="tags norender">
+                            </div>
+                        </div>
+                        <div class="text-button blue disabled" id="submit-button">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">check</span>
+                            </div>
+                            <div class="button-text">
+                                Post it!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup">
+    </div>
+</body>
+
+</html>

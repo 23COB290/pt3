@@ -1,0 +1,29 @@
+name: 'Upload to GCP Cloud Storage'
+
+on:
+  push:
+    branches:
+      - 'main'
+
+
+jobs:
+    'upload-web':
+      runs-on: 'ubuntu-latest'
+      permissions:
+        contents: 'read'
+        id-token: 'write'
+
+      steps:
+        - id: 'checkout'
+          uses: 'actions/checkout@v4'
+    
+        - id: 'auth'
+          uses: 'google-github-actions/auth@v1'
+          with:
+            credentials_json: '${{secrets.GCP_SERVICE_ACCOUNT}}'
+
+        - name: 'Set up Cloud SDK'
+          uses: 'google-github-actions/setup-gcloud@v2'
+      
+        - name: 'Sync web directory to GCP BUCKET'
+          run: 'gsutil -m -h "Cache-Control:no-cache" rsync -R -d web gs://013.team/'

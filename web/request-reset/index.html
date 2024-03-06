@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Forgot Password</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="/global-styles.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+
+    <link rel="stylesheet" href="/ui-elements/all.css">
+    
+    <script src="/global-api.js"></script>
+    <script src="/global-ui.js" defer type="module"></script>
+    <script defer src="client.js" type="module"></script>
+
+</head>
+<body>
+    <div class="fullscreen">
+        <img src="https://cdn.013.team/assets/wordmark-large.png" alt="logo" class="logo">
+        <form id="email-form">
+            <div class="box login-box">
+                <h1>Reset password</h1>
+                <div class="text">Enter the email address you use to log in and we will send you a password reset link.</div>
+                <div class="login-container">
+                    <div class="input-container">
+                        <label for="email">Email</label>
+                        <div class="textfield-container">
+                            <input type="email" id="email" class="textfield" autocomplete="email" placeholder="someone@example.com" required autofocus>
+                        </div>
+                    </div>
+                </div>
+                <div id="send" class="text-button blue disabled">
+                    <div class="button-text">
+                        Send Link
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div id="status" class="box hidden"></div>
+    </div>
+    <div class="popup"></div>
+</body>
+</html>
