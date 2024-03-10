@@ -10,6 +10,7 @@ require_once("lib/response.php");
 try {
     $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
 } catch (Exception $e) {
+    error_log($e);
     respond_infrastructure_error("Failed to connect to database", ERROR_DATABASE_CONNECTION_FAILED);
 }
 
