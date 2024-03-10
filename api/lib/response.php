@@ -134,6 +134,10 @@ function respond_session_tampering() {
     respond_error("Session tampering detected", ERROR_NOT_AUTHENTICATED, 401);
 }
 
+function respond_token_invalid() {
+    respond_error("Malformed crypto payload", ERROR_NOT_AUTHENTICATED, 401);
+}
+
 function respond_request_method_disallowed($allowed_methods) {
     respond_error(
         "This route only supports the ". implode(", ", $allowed_methods) . " methods",

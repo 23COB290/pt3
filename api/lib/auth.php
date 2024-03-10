@@ -48,21 +48,21 @@ function crypto_decrypt_bytestream(
     $split_data = explode(".", $bytearray, 2);
 
     if (count($split_data) != 2) {
-        respond_session_tampering();
+        respond_token_invalid();
     }
 
     list($hmac, $payload) = $split_data;
     $split_payload = explode("-", $payload);
 
     if (count($split_payload) !=2) {
-        respond_session_tampering();
+        respond_token_invalid();
     }
 
     list($iv, $encrypted_data) = $split_payload;
 
 
     if (!hash_equals($hmac, hash_hmac($hmac_algo, $payload, hex2bin($hmac_key)))) {
-        respond_session_tampering();
+        respond_token_invalid();
     }
     // hmac checks out so now we can decrypt
     $bytearray = openssl_decrypt($encrypted_data, $encryption_algo, hex2bin($encryption_key), 0, hex2bin($iv));
