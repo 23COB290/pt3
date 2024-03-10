@@ -51,6 +51,17 @@
             }
             
         },
+        {
+            "cwd": "${workspaceRoot}",
+            "name": "run prebuilt invalidation server",
+            "type":"cppvsdbg",
+            "program": "${workspaceRoot}/invalidation_service.exe",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "presentation": {
+                "focus": false,
+            }
+        }
     ],
     "compounds": [
         {
@@ -61,6 +72,14 @@
                 "php launch web server"
             ],
             "stopAll": true,
+        },
+        {
+            "name": "RUN GUTTED API",
+            "configurations": [
+                "php launch api server",
+                "php launch web server",
+                "run prebuilt invalidation server",
+            ],
         }
     ]
 }

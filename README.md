@@ -30,8 +30,6 @@ const SIGNUP_ENCRYPTION_ALGO = "aes-256-cbc";
 const SIGNUP_SIGNING_ALGO = "sha3-256";
 
 
-// gcp
-
 // both 256 bit keys
 const SESSION_ENCRYPTION_KEY_HEX = "session encryption key";
 const SESSION_SIGNING_KEY_HEX = "session signing key";
@@ -50,6 +48,10 @@ const SIGNUP_SIGNING_KEY_HEX = "";
 const GCP_CREDENTIALS_OBJECT = Array(); // creds.json array form
 
 const GOOGLE_ASSET_BUCKET_NAME = "usercontent.013.team"; // storage bucket name
+
+// mailjet
+const MAILJET_API_KEY = "";
+const MAILJET_API_SECRET = "";
 ?>
 ```
 
@@ -60,34 +62,25 @@ const GOOGLE_ASSET_BUCKET_NAME = "usercontent.013.team"; // storage bucket name
 
 1. Install [PHP VS16 x64 Non Thread Safe](https://windows.php.net/download/)
 2. Extract to `C:\php`
-3. (Optional) Install the [PHP Server](https://marketplace.visualstudio.com/items?itemName=brapifra.phpserver) extension for VS Code
-   1. (If using the extension) Change the php server location to serve from `web/` OR open the `web/` folder directly in vscode
-   2. In the extension settings give the directory of your php folder and php.ini to PHP Server
-   3. Start the php server in the `web` folder
+3. The repo comes with some run and debug configurations, select `php launch web server` for production api
 
-        *Make sure there is a trailing slash in URLs because php server wont load styles or scripts if there isnt.*
-
-        *URLs should look like this:* `localhost:3000/dashboard/` `localhost:3000/`
-
-4. (If not) The repo comes with some run and debug configurations, select `php launch web server`
-
-    *navigate to localhost:8000*
+    *navigate to http://localhost:8000*
 
 The site should now function like normal on your local machine.
 
 ## setting up local api
-1. change the php include path to include the api folder include_path = ".;C:\..\githubrepo\api\"
-2. enable the openssl, curl, mysqli, mbstring, fileinfo extensions
-3. download the GTSRootR1 and Digicert GlobalRoot G2 certificate from the iternet
+1. change the php include path to include the api folder `include_path = ".;C:\..\githubrepo\api\"`
+2. enable the openssl, curl, mysqli, mbstring, fileinfo extensions in php.ini
+3. download the GTSRootR1 and Digicert GlobalRoot G2 certificate from [here](https://cdn.013.team/development/Roots.pem)
 4. add the `curl.cainfo="path/to/certificate"` entry to the config under the `[curl]` heading
-5. install composer
-6. install the composer packages: google/cloud-storage in the api folder
-7. install mariadb and setup an account to access
+5. install [composer](https://getcomposer.org/Composer-Setup.exe)
+6. install the composer packages by running composer update in /api
+7. install [mariadb](https://mariadb.org/download/?t=mariadb&p=mariadb&r=10.11.7&os=windows&cpu=x86_64&pkg=msi&m=xtom_ams) and setup an account to access
 8. create the secrets.php
-   1. generate 2 encryption keys in a hex representation
+   1. generate the encryption keys in a hex representation
    2. insert the database credentials you just created
-9. import the database format (dump.sql on the discord or get the latest backup from gcp) using 'mariadb < dump.sql' with the credentials
-10. instead of running the web server like above select `RUN DEVELOPMENT API`
+9. import the database format (backups.013.team on gcp) using `mariadb --database team013 --user username123 --password=password123 < dump.sql`
+10. instead of running the web server like above select `RUN GUTTED API`
 11. the api will need a copy of the invalidation service running so make sure you can run (and possibly build) it
 12. in global-api.js uncomment the const API_BASE and change it to the address of the php server you just started
 

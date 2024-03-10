@@ -10,7 +10,7 @@ to reduce api complexity, for example:
 
 ```php
 <?php
-require("../context.php");
+require("lib/context.php");
 
 // for abc.php/route1
 function r_abc_route1(RequestContext $ctx, string $args) {
@@ -29,7 +29,7 @@ register_route(new Route(
 ));
 
 
-// this only needs to be done once per file
+// this only needs to be done once at the end of each file
 contextual_run();
 
 ?>
@@ -44,11 +44,17 @@ the helper function *body_requires_fields* should be used to check validity
 this is only checked if the used request method supports a body, for an endpoint that takes both GET and POST, only post will error without a body.
 
 - URL_PATH_ARGS_LEGAL  
-by url path args (/path1/arg1) are not allowed. setting this flag will allow them
+by default url path args (/path1/arg1) are not allowed. setting this flag will allow them
 
 - URL_PATH_ARGS_REQUIRED  
-  same as URL_PATH_ARGS_LEGAL but requires atleast 1 argument  
-  must be used in conjunction with URL_PATH_ARGS_LEGAL
+same as URL_PATH_ARGS_LEGAL but requires atleast 1 argument  
+must be used in conjunction with URL_PATH_ARGS_LEGAL
+
+- NON_IDEMPOTENT  
+states that the request mutates state on request - **HTTP GET ONLY**
+
+- IDEMPOTENT_ON_NO_TRACK  
+states that the request mutates state on request unless $ctx->no_track is true - **HTTP GET ONLY**
 
 ## Helper functions
 
