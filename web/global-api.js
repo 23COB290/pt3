@@ -31,9 +31,14 @@ class APIResponse {
 
 }
 
-//const API_BASE = "http://localhost:4444";
-const API_BASE = "https://013.team/api";
+let API_BASE;
 
+if (window.location.hostname == "localhost") {
+    API_BASE = "http://localhost:4444";
+}
+else {
+    API_BASE = "https://013.team/api";
+}
 // always remember null is a valid body
 async function api_request(route, method, body, options={}) {
 
