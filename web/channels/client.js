@@ -18,16 +18,18 @@ const channelMap = new Map();
 
 
 function renderChannelIcon(channel) {
-    let icon;
     switch (channel.type) {
         case CHANNEL_TYPE_DM:
-            icon = document.createElement('img');
+            let wrapper = document.createElement('div');
+            wrapper.classList.add('channel-icon');
+            var icon = document.createElement('img');
             icon.src = global.employeeAvatarOrFallback(channel.recipient);
             icon.alt = getChannelName(channel);
             icon.classList.add('channel-icon', 'avatar');
-            break;
+            wrapper.appendChild(icon);
+            return wrapper;
         case CHANNEL_TYPE_GROUP:
-            icon = document.createElement('span');
+            var icon = document.createElement('span');
             icon.classList.add('channel-icon', 'group-icon', 'material-symbols-rounded', 'avatar');
 
             // take last 3 digits to avoid fp rounding errors
@@ -36,9 +38,9 @@ function renderChannelIcon(channel) {
             icon.classList.add(`colour-${colour}`);
 
             icon.textContent = "group"
-            break;
+
+            return icon
     }
-    return icon;
 }
 
 function getChannelName(channel) {
