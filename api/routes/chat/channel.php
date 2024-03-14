@@ -38,6 +38,20 @@ function r_chat_channel(RequestContext $ctx, string $args) {
 
                 $name = "";
                 $recipient = $ctx->request_body["recipient"];
+
+                if ($recipient == $ctx->session->hex_associated_user_id) {
+                    respond_bad_request("Cannot create a DM with yourself", ERROR_BODY_FIELD_INVALID_DATA);
+                }
+
+                $existing = db_channel_dm_fetch($ctx->session->hex_associated_user_id, $recipient);
+
+                if ($existing !== false) {
+                    db_channel_set_last_accessed($existing, $ctx->session->hex_associated_user_id);
+                    respond_ok(array(
+                        "channel_id" => $existing
+                    ));
+                }
+
                 $employees = [$recipient, $ctx->session->hex_associated_user_id];
                 break;
             case CHANNEL_TYPE_GROUP:

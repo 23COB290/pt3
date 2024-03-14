@@ -2083,7 +2083,6 @@ function db_channel_last_accessed_fetchall(string $emp_id) {
         WHERE `CHANNEL_ACCESSED`.empID = ?
         GROUP BY `CHANNELS`.channelID
         ORDER BY `CHANNEL_ACCESSED`.channelAccessLastAccessed DESC
-        LIMIT 100
         "
     );
     $query->bind_param("s", $bin_e_id);
@@ -2125,6 +2124,37 @@ function db_channel_new(string $channel_name, int $channel_type) {
     }
 
     return bin2hex($bin_c_id);
+}
+
+
+function db_channel_dm_fetch(string $employee1_id, string $employee2_id) {
+    global $db;
+
+    $bin_e1_id = hex2bin($employee1_id);
+    $bin_e2_id = hex2bin($employee2_id);
+
+    $query = $db->prepare(
+        "SELECT `CHANNEL_DM_BINDING`.channelID FROM `CHANNEL_DM_BINDING`
+        WHERE
+            (`CHANNEL_DM_BINDING`.employee1 = ? AND `CHANNEL_DM_BINDING`.employee2 = ?) OR
+            (`CHANNEL_DM_BINDING`.employee1 = ? AND `CHANNEL_DM_BINDING`.employee2 = ?)
+        "
+    );
+    $query->bind_param("ssss", $bin_e1_id, $bin_e2_id, $bin_e2_id, $bin_e1_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+    
+    if ($res->num_rows == 0) {
+        return false;
+    }
+    
+    $row = $res->fetch_assoc();
+
+    return bin2hex($row["channelID"]);
 }
 
 
