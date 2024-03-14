@@ -1826,6 +1826,10 @@ export function applyArrowNavigable() {
                 return;
             }
 
+            if (element.getAttribute("contenteditable") == "true" || element.tagName == "TEXTAREA" || element.tagName == "INPUT") {
+                return;
+            }
+
 
             if (e.key == "ArrowLeft") {
                 e.preventDefault();

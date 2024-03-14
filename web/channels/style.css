@@ -52,11 +52,14 @@
 .chat-container {
     width: 100%;
     height: 100%;
-    display: grid;
-    grid-template-columns: 20% 80%;
+    display: flex;
+    flex-direction: row;
     border-radius: 4px;
 
     #channel-list {
+
+        width: min(25%, 30em);
+
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
@@ -78,6 +81,12 @@
             }
 
         }
+        #channel-list-wrapper {
+            height: 100%;
+            display:flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
 
 
         .search {
@@ -90,6 +99,7 @@
     }
 
     #channel-details {
+        width: 100%;
         display:flex;
         flex-direction: row;
 
@@ -99,20 +109,22 @@
 
             border-right: 1px solid var(--border-clr);
 
-            
             padding: 1rem;
 
             height:100%;
             width:100%;
 
+            display: flex;
+            flex-direction: column;
+
             > * {
-                height: 100%;
                 width: 100%;
             }
 
-            display: grid;
-            grid-template-rows: 5% 90% 5%;
 
+            .channel-messages {
+                height: 100%
+            }
 
             .channel-title {
                 display:flex;
@@ -146,23 +158,39 @@
                 display: flex;
                 flex-direction: row;
                 gap: 0.25rem;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: flex-start;
                 border: 1px solid var(--border-clr);
                 border-radius: 0.5rem;
                 padding: 0 4px;
 
+
+                max-height: 50%;
+
+                .icon-button {
+                    margin: 0.5em auto;
+                }
+
+
                 #channel-input {
-                    height: 100%;
+
+                    &:empty:before {
+                        content: "Type a message";
+                        opacity: 0.7;
+                    }
+
+                    padding: 0.5em 0;
+
+                    align-self: center;
+
+                    max-height: 100%;
+                    overflow-y: auto;
+
                     width: 100%;
                     border: none;
                     outline: none;
                     background-color: inherit;
                     border-radius: 4px;
-                }
-
-                #send-buton {
-                    align-self: flex-end;
                 }
             }
         }
@@ -174,7 +202,7 @@
             flex-direction: column;
             gap: 0.5em;
 
-            width: 20%;
+            width: max(20%, 14rem);
 
             background-color: var(--white);
 
