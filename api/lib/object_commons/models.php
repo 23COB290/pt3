@@ -699,4 +699,53 @@ const TABLE_GLOBAL_SETTINGS = new Table(
 );
 
 
+const _CHANNELID = new Column(
+    "channelID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+    dont_friendly_name:true
+);
+
+
+const TABLE_CHANNEL = new Table(
+    "`CHANNEL`",
+    ["channelID"],
+    [
+        _CHANNELID,
+        new Column(
+            "channelName", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false,
+            constraints:[new ContentLengthConstraint(2, 254)]
+        ),
+        new Column(
+            "channelType", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:false,
+            constraints:[new RestrictedDomainConstraint([CHANNEL_TYPE_DM, CHANNEL_TYPE_GROUP])]
+        ),
+        new Column(
+            "channelCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true
+        ),
+    ],
+    "channel",
+    "channel"
+);
+
+
+const TABLE_CHANNEL_ACCESSED = new Table(
+    "`CHANNEL_ACCESSED`",
+    [],
+    [
+        new Column(
+            "empID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
+        ),
+        new Column(
+            "channelID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_CHANNEL, _CHANNELID)]
+        ),
+        new Column(
+            "channelAccessLastAccessed", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true
+        ),
+    ],
+    "access",
+    "channelAccess"
+);
+
+
 ?>

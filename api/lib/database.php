@@ -2066,4 +2066,136 @@ function db_global_settings_set(int $avatars, int $posts, int $tags) {
 }
 
 
+function db_channel_last_accessed_fetchall(string $emp_id) {
+    global $db;
+
+    $bin_e_id = hex2bin($emp_id);
+
+    $query = $db->prepare(
+        "SELECT `CHANNELS`.*, `CHANNEL_ACCESSED`.channelAccessLastAccessed as lastAccessed,
+        GROUP_CONCAT(DISTINCT `CHANNEL_MEMBER`.empID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as members     
+        FROM `CHANNEL_ACCESSED`
+        LEFT JOIN `CHANNELS`
+            ON `CHANNEL_ACCESSED`.channelID = `CHANNELS`.channelID
+        LEFT JOIN `CHANNEL_MEMBER`
+            ON `CHANNEL_MEMBER`.channelID = `CHANNELS`.channelID
+
+        WHERE `CHANNEL_ACCESSED`.empID = ?
+        GROUP BY `CHANNELS`.channelID
+        ORDER BY `CHANNEL_ACCESSED`.channelAccessLastAccessed DESC
+        LIMIT 100
+        "
+    );
+    $query->bind_param("s", $bin_e_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+    
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_CHANNEL, ["members"=>"a-binary", "lastAccessed"=>"integer"]);
+        array_push($data, $encoded);
+    }
+    return $data;
+}
+
+
+function db_channel_new(string $channel_name, int $channel_type) {
+    global $db;
+
+    $bin_c_id = generate_uuid();
+    $time = timestamp();
+
+    $query = $db->prepare(
+        "INSERT INTO `CHANNELS` VALUES (?, ?, ?, ?)"
+    );
+    $query->bind_param("ssis",
+        $bin_c_id,
+        $channel_name,
+        $channel_type,
+        $time
+    );
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    return bin2hex($bin_c_id);
+}
+
+
+function db_channel_dm_bind_members(string $channel_id, string $employee1_id, string $employee2_id) {
+    global $db;
+
+    $bin_c_id = hex2bin($channel_id);
+    $bin_e1_id = hex2bin($employee1_id);
+    $bin_e2_id = hex2bin($employee2_id);
+
+    $query = $db->prepare(
+        "INSERT INTO `CHANNEL_DM_BINDING` VALUES (?, ?, ?)"
+    );
+    $query->bind_param("sss", $bin_e1_id, $bin_e2_id, $bin_c_id);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
+}
+
+
+function db_channel_bind_members(string $channel_id, array $emp_ids) {
+    global $db;
+
+    $bin_c_id = hex2bin($channel_id);
+
+    $values = array_merge(...array_map(function ($emp_id) use ($bin_c_id) {
+        return [$bin_c_id, hex2bin($emp_id)];
+    }, $emp_ids));
+
+    $query = $db->prepare(
+        "INSERT INTO `CHANNEL_MEMBER` VALUES " . create_chunked_array_binding(count($emp_ids), 2)
+    );
+
+    $query->bind_param(
+        str_repeat("ss", count($emp_ids)),
+        ...$values
+    );
+
+    if (!$query->execute()) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
+
+}
+
+
+function db_channel_set_last_accessed(string $channel_id, string $emp_id) {
+    global $db;
+
+    $bin_c_id = hex2bin($channel_id);
+    $bin_e_id = hex2bin($emp_id);
+    $time = timestamp();
+
+    $query = $db->prepare(
+        "INSERT INTO `CHANNEL_ACCESSED` VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE channelAccessLastAccessed = ?
+        "
+    );
+    $query->bind_param("ssss", $bin_e_id, $bin_c_id, $time, $time);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+}
+
+
+
 ?>
