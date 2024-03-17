@@ -84,7 +84,6 @@ function renderChannelInList(channel, members) {
 
     const icon = renderChannelIcon(channel);
     
-
     const details = document.createElement('div');
     details.classList.add('channel-details');
 
@@ -99,8 +98,19 @@ function renderChannelInList(channel, members) {
     details.appendChild(name);
     details.appendChild(preview);
 
+    const actions = document.createElement('div');
+    actions.classList.add('channel-actions');
+
+    const close = document.createElement('span');
+    close.classList.add('material-symbols-rounded');
+
+    close.textContent = "close"
+
+    actions.appendChild(close);
+
     element.appendChild(icon);
     element.appendChild(details);
+    element.appendChild(actions);
 
     return element;
 }
