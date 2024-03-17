@@ -9,8 +9,6 @@ function r_chat_channels(RequestContext $ctx, string $args) {
         respond_ok(array(
             "channels" => $channels
         ));
-    } else if ($ctx->request_method == "PUT") {
-        // add channel to recent list
     } else if ($ctx->request_method == "DELETE") {
         // remove channel from list
         // if groupchat leave & if last member delete
@@ -36,7 +34,7 @@ function r_chat_channel(RequestContext $ctx, string $args) {
                     "recipient" => "string",
                 ]);
 
-                $name = "";
+                $name = null;
                 $recipient = $ctx->request_body["recipient"];
 
                 if ($recipient == $ctx->session->hex_associated_user_id) {
@@ -60,16 +58,23 @@ function r_chat_channel(RequestContext $ctx, string $args) {
                 // name
 
                 $ctx->body_require_fields_as_types([
-                    "name" => "string",
                     "recipients" => "array",
                 ]);
 
-                $name = $ctx->request_body["name"];
+                $ctx->body_require_fields_as_types([
+                    "name" => "string",
+                ], true);
+
+                $name = $ctx->request_body["name"] ?? null;
                 $employees = $ctx->request_body["recipients"];
                 $employees[] = $ctx->session->hex_associated_user_id;
                 break;
             default:
                 respond_bad_request("Expected channel type to be either 0 or 1", ERROR_BODY_FIELD_INVALID_DATA);
+        }
+
+        if ($name !== null && strlen($name) > 254) {
+            respond_bad_request("Channel name must be less than 254 characters", ERROR_BODY_FIELD_INVALID_DATA);
         }
 
         // validate employees exist
@@ -106,6 +111,11 @@ function r_chat_channel(RequestContext $ctx, string $args) {
                 break;
             case CHANNEL_TYPE_GROUP:
                 // TODO: send new group message
+
+                // THIS IS TEMPORARY
+                foreach ($employees as $employee) {
+                    db_channel_set_last_accessed($channel_id, $employee);
+                }
                 break;
         }
 

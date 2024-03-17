@@ -2102,7 +2102,7 @@ function db_channel_last_accessed_fetchall(string $emp_id) {
 }
 
 
-function db_channel_new(string $channel_name, int $channel_type) {
+function db_channel_new(?string $channel_name, int $channel_type) {
     global $db;
 
     $bin_c_id = generate_uuid();

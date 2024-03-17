@@ -13,7 +13,182 @@ const channelIcon = channelDetails.querySelector('#channel-icon-wrapper');
 
 const noSelectedChannel = document.getElementById('no-selected-channel');
 
+const newChannelButton = document.getElementById('new-channel');
+
 const channelMap = new Map();
+
+
+newChannelButton.addEventListener('click', () => {
+    newChannelPopup();
+});
+
+
+async function newChannelPopup() {
+
+    const recipients = new Set();
+    let channelType = CHANNEL_TYPE_DM;
+    let groupName;
+
+    const callback = (ctx) => {
+
+        ctx.content.classList.add('new-channel-modal');
+        ctx.actionButton.classList.add('disabled');
+
+
+        ctx.content.innerHTML = `
+
+            <div id="group-name-wrapper" class="disabled tooltip tooltip-under">
+                <div class="popup-subtitle">Group name</div>
+                <input class="search white disabled" type="text" id="group-name" autocomplete="off">
+                <p id="group-name-tooltip" class="tooltiptext">Add more recipients to name a group chat</p>
+            </div>
+
+
+            <div class="popup-subtitle">Recipients</div>
+            <div class="search-wrapper">
+                <div class="search" tabindex="0">
+                    <input id="recipient-search" class="search-input" placeholder="Search Recipients" type="text">
+                    <div class="search-icon">
+                        <span class="material-symbols-rounded">search</span>
+                    </div>
+                </div>
+                <div class="search-results">
+
+                </div>
+            </div>
+            <div class="recipient-wrapper">
+                <div id="recipient-placeholder">No recipients</div>
+                <div id="recipient-list" class="norender">
+                    
+                </div>
+            </div>
+        `
+
+        const recipientSearch = ctx.content.querySelector('#recipient-search');
+        const searchResults = ctx.content.querySelector('.search-results');
+        groupName = ctx.content.querySelector('#group-name');
+        const groupNameWrapper = ctx.content.querySelector('#group-name-wrapper');
+        const groupNameTooltip = ctx.content.querySelector('#group-name-tooltip');
+        const recipientList = ctx.content.querySelector('#recipient-list');
+        const recipientPlaceholder = ctx.content.querySelector('#recipient-placeholder');
+
+
+        const updateChannelDetails = () => {
+
+            // set type and enable name if group chat
+            if (recipients.size > 1) {
+                channelType = CHANNEL_TYPE_GROUP;
+                groupNameWrapper.classList.remove('disabled');
+                groupNameTooltip.classList.add('norender');
+            } else {
+                channelType = CHANNEL_TYPE_DM;
+                groupNameWrapper.classList.add('disabled');
+                groupNameTooltip.classList.remove('norender');
+            }
+
+            // disable create button if no recipients
+            // and show placeholder text
+            if (recipients.size === 0) {
+                recipientPlaceholder.classList.remove('norender');
+                recipientList.classList.add('norender');
+                ctx.actionButton.classList.add('disabled');
+            } else {
+                recipientPlaceholder.classList.add('norender');
+                recipientList.classList.remove('norender');
+                ctx.actionButton.classList.remove('disabled');
+            }
+
+        }
+
+        const renderRecipientInList = (emp) => {
+            let emp_name = global.employeeToName(emp);
+            let emp_icon = global.employeeAvatarOrFallback(emp);
+            let listItem = document.createElement("div");
+            listItem.classList.add("employee-list-item");
+            listItem.classList.add("tooltip", "tooltip-under");
+            listItem.innerHTML = `
+                <div class="icon-overlay-container avatar">
+                    <img src="${emp_icon}" class="avatar">
+                    <span class="material-symbols-rounded">close</span>
+                </div>
+                <p class="tooltiptext">Remove ${emp_name}</p>
+            `;
+            recipientList.appendChild(listItem);
+    
+            listItem.addEventListener("pointerup", (e) => {
+                e.stopPropagation();
+                recipients.delete(emp.empID);
+                recipientList.removeChild(listItem);
+                updateChannelDetails();
+            });
+        }
+
+        const searcher = new global.ReusableRollingTimeout(async () => {
+            const res = await get_api(`/employee/employee.php/all?q=${recipientSearch.value}`);
+            if (!res.success) {
+                return;
+            }
+            const employees = res.data.employees;
+
+            searchResults.replaceChildren();
+
+            employees.forEach((emp) => {
+                const elem = renderChannelMember(emp);
+                elem.addEventListener('pointerup', () => {
+                    if (recipients.has(emp.empID)) {
+                        return;
+                    }
+                    recipients.add(emp.empID);
+                    renderRecipientInList(emp);
+                    updateChannelDetails();
+                });
+                searchResults.appendChild(elem);
+            });
+
+            
+        }, 150);
+
+        searcher.roll();
+
+        recipientSearch.addEventListener('input', () => {
+            searcher.roll();
+        });
+
+    }
+
+
+    await global.popupModal(
+        false,
+        "Create a DM or Group Chat",
+        callback,
+        { text:"Create", "class":"blue"}
+    );
+
+    let body = {
+        type: channelType,
+    };
+
+    if (channelType === CHANNEL_TYPE_GROUP) {
+        body.name = groupName.value ?? null;
+        body.recipients = [...recipients];
+    } else {
+        body.recipient = [...recipients][0];
+        body.name = null;
+    }
+
+    const res = await post_api("/chat/channel.php/channel", body);
+
+    if (res.success) {
+        fetchAndRenderChannels();
+    } else {
+        global.popupAlert(
+            "Unable to create channel",
+            `The following error occurred: ${res.error.message} (${res.error.code})`,
+            "error"
+        );
+    }
+
+}
 
 
 
@@ -122,6 +297,8 @@ async function fetchAndRenderChannels() {
     if (!res.success) {
         return;
     }
+
+    channelList.replaceChildren();
 
     const me = (await global.getCurrentSession()).employee;
 
