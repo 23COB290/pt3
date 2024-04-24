@@ -8,6 +8,8 @@ require_once("lib/database.php");
 const OBJECT_GENERAL_ALLOWED_METHODS = ["POST", "GET", "PATCH", "DELETE"];
 
 
+// todo: these could be provided by the caller
+
 const OBJECT_GENERIC_NEW_FUNCS = [
     "`TASKS`"=>"_new_task",
     "`POSTS`"=>"_new_post",
