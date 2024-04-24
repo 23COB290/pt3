@@ -159,7 +159,7 @@ async function newChannelPopup() {
 
     await global.popupModal(
         false,
-        "Create a DM or Group Chat",
+        "New DM or Group Chat",
         callback,
         { text:"Create", "class":"blue"}
     );
