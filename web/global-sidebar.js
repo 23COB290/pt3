@@ -41,6 +41,11 @@ training.classList.add('sidebar-item', 'manager-only', 'norender')
 training.id = 'training';
 training.setAttribute('href', '/dashboard/');
 
+export const dataAnalytics = document.createElement('a')
+dataAnalytics.classList.add('sidebar-item')
+dataAnalytics.id = 'dataAnalytics'
+dataAnalytics.setAttribute('href', '/dataAnalytics/')
+
 export const channels = document.createElement('a')
 channels.classList.add('sidebar-item')
 channels.id = 'channels';
@@ -69,6 +74,7 @@ personal.innerHTML = `<span class="material-symbols-rounded">checklist</span> <p
 wiki.innerHTML = `<span class="material-symbols-rounded">menu_book</span> <p class="">Wiki</p>`;
 training.innerHTML = `<span class="material-symbols-rounded">school</span> <p class="">Training</p>`;
 channels.innerHTML = `<span class="material-symbols-rounded">chat</span> <p class="">Chats</p>`;
+dataAnalytics.innerHTML = `<span class="material-symbols-rounded">analytics</span> <p class="">Data Analytics</p>`;
 settings.innerHTML = `<span class="material-symbols-rounded">settings</span> <p class="">Settings</p>`;
 logout.innerHTML = `<span class="material-symbols-rounded">logout</span> <p class="">Logout</p>`;
 
@@ -80,6 +86,7 @@ if (sidebar !== null) {
     sidebar.appendChild(wiki);
     sidebar.appendChild(training);
     sidebar.appendChild(channels);
+    sidebar.appendChild(dataAnalytics);
     sidebar.appendChild(settings);
     sidebar.appendChild(logout);
     items = document.querySelectorAll('.sidebar-item');
