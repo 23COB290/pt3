@@ -748,4 +748,32 @@ const TABLE_CHANNEL_ACCESSED = new Table(
 );
 
 
+const TABLE_MESSAGES = new Table(
+    "`MESSAGES`",
+    ["channelID", "msgID"],
+    [
+        new Column(
+            "msgID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            dont_friendly_name:true
+        ),
+        new Column(
+            "channelID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_CHANNEL, _CHANNELID)]
+        ),
+        new Column(
+            "author", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
+        ),
+        new Column(
+            "messageCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true
+        ),
+        new Column(
+            "messageContent", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false,
+            constraints:[new ContentLengthConstraint(1, 4000)]
+        ),
+    ],
+    "message",
+    "message"
+);
+
 ?>
