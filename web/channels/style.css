@@ -172,7 +172,7 @@
                 }
 
 
-                #channel-input {
+                #message-input {
 
                     &:empty:before {
                         content: "Type a message";
@@ -433,5 +433,25 @@
         }
     }
 
+}
+
+.message {
+    display:flex;
+    flex-direction: row;
+    gap: 0.5em;
+    padding: 0.5em 0;
+
+    .message-avatar {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .message-content-wrapper {
+
+        .message-author {
+            font-weight: 700;
+        }
+
+    }
 
 }

@@ -10,12 +10,16 @@ const channelDetails = document.getElementById('channel-details');
 const channelName = channelDetails.querySelector('.channel-name');
 const channelMembers = channelDetails.querySelector('.channel-members');
 const channelIcon = channelDetails.querySelector('#channel-icon-wrapper');
+const channelMessages = channelDetails.querySelector('.channel-messages');
+const messageInput = channelDetails.querySelector('#message-input');
 
 const noSelectedChannel = document.getElementById('no-selected-channel');
 
 const newChannelButton = document.getElementById('new-channel');
 
 const channelMap = new Map();
+
+var currentSelectedChannel = null;
 
 
 newChannelButton.addEventListener('click', () => {
@@ -361,6 +365,11 @@ async function renderIndividualChannel(channelID) {
         return;
     }
 
+    currentSelectedChannel = channel;
+
+    fetchAndRenderMessages(channelID);
+
+
     global.setBreadcrumb(["Chats", name], ["./", `#${channelID}`])
     setChannelDetailsVisiblity(true);
 
@@ -384,8 +393,67 @@ async function renderIndividualChannel(channelID) {
         channelMembers.appendChild(renderChannelMember(member));
     }
 
+}
+
+async function fetchAndRenderMessages(channelID) {
+    const res = await get_api(`/chat/message.php/messages/${channelID}`);
+
+    if (!res.success) {
+        return;
+    }
+
+    channelMessages.replaceChildren();
+
+    const messages = res.data.messages;
+
+    // todo bulk messages together
+    for (const message of messages) {
+        renderMessage(message);
+    }
 
 }
+
+async function renderMessage(message) {
+
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+
+    const avatar = document.createElement('img');
+    avatar.src = global.employeeAvatarOrFallback(message.author);
+    avatar.alt = global.employeeToName(message.author);
+    avatar.classList.add('avatar', 'message-avatar');
+
+    const contentWrapper = document.createElement('div');
+    contentWrapper.classList.add('message-content-wrapper');
+
+    const details = document.createElement('div');
+    details.classList.add('message-details');
+
+    const author = document.createElement('div');
+    author.classList.add('message-author');
+    author.textContent = global.employeeToName(message.author);
+
+    details.appendChild(author);
+
+
+
+    const content = document.createElement('div');
+    content.classList.add('message-content');
+    content.innerText = message.content;
+
+
+    contentWrapper.appendChild(details);
+    contentWrapper.appendChild(content);
+
+
+    messageElement.appendChild(avatar);
+    messageElement.appendChild(contentWrapper);
+
+    channelMessages.appendChild(messageElement);
+
+}
+
+
 
 async function renderFromBreadcrumb(locations) {
 
@@ -405,3 +473,34 @@ window.addEventListener("breadcrumbnavigate", (e) => {
     renderFromBreadcrumb(e.locations);
 });
 
+
+messageInput.addEventListener("keydown", async (event) => {
+    if (event.key !== "Enter" || event.shiftKey) {
+        return;
+    }
+
+    event.preventDefault();
+    
+    const content = messageInput.textContent.trim();
+
+    const res = await post_api(`/chat/message.php/message/${currentSelectedChannel.channelID}`, {
+        content: content
+    });
+
+    if (res.success) {
+        messageInput.textContent = "";
+
+        let message = res.data;
+
+        message.author = (await global.getCurrentSession()).employee;
+
+        return renderMessage(res.data);
+    }
+
+    global.popupAlert(
+        "Unable to send message",
+        `The following error occurred: ${res.error.message} (${res.error.code})`,
+        "error"
+    );
+
+});

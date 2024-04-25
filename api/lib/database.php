@@ -2272,6 +2272,7 @@ function db_messages_fetchall(string $channel_id) {
         LEFT JOIN `ASSETS`
             ON `ASSETS`.assetID = `EMPLOYEES`.avatar
         WHERE `MESSAGES`.channelID = ?
+        ORDER BY `MESSAGES`.messageCreatedAt ASC
         "
     );
     $query->bind_param("s", $bin_c_id);

@@ -768,7 +768,7 @@ const TABLE_MESSAGES = new Table(
             "messageCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true
         ),
         new Column(
-            "messageContent", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false,
+            "messageContent", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(1, 4000)]
         ),
     ],
