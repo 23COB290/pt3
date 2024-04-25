@@ -237,5 +237,25 @@ function object_check_user_can_create_tags(RequestContext $ctx, array $resource_
     }
 }
 
+function object_check_channel_exists(RequestContext $ctx, array $resource_ids) {
+    $channel = db_channel_fetch($resource_ids[0]);
+
+    if (!$channel) {
+        respond_resource_not_found("channel ". $resource_ids[0]);
+    }
+
+    $ctx->channel = $channel;
+}
+
+function object_check_user_in_channel(RequestContext $ctx, array $resource_ids) {
+    // requires channel exists
+
+    $author = $ctx->session->hex_associated_user_id;
+
+    if (!in_array($author, $ctx->channel["members"])) {
+        respond_resource_not_found("channel ". $resource_ids[0]);
+    }
+}
+
 
 ?>

@@ -37,8 +37,21 @@ function r_chat_message(RequestContext $ctx, string $args) {
 }
 
 function r_chat_messages(RequestContext $ctx, string $args) {
-    object_check_channel_exists($ctx, $args);
-    object_check_user_in_channel($ctx, $args);
+
+    $resource_specifiers = [$args];
+
+    foreach ($resource_specifiers as $specifier) {
+        if (!@hex2bin($specifier)) {
+            respond_bad_request(
+                "Url resource specifiers are expected to be valid hex (offender '". $specifier ."')",
+                ERROR_REQUEST_URL_PATH_PARAMS_INVALID,
+            );
+        }        
+    }
+
+
+    object_check_channel_exists($ctx, $resource_specifiers);
+    object_check_user_in_channel($ctx, $resource_specifiers);
 
     // needs pagination
 }
@@ -97,8 +110,9 @@ register_route(new Route(
     "r_chat_messages",
     1,
     [
-        "URL_PATH_ARGS_LEGAL"
-    ] // no flags...
+        "URL_PATH_ARGS_LEGAL",
+        "URL_PATH_ARGS_REQUIRED"
+    ]
 ));
 
 register_route(new Route(
