@@ -86,6 +86,9 @@ function _new_message(RequestContext $ctx, array $body, array $url_specifiers) {
         $body["author"] = $author_id;
         $body["channelID"] = $channel_id;
 
+
+        db_channel_set_last_accessed_bulk(bin2hex($channel_id), $ctx->channel["members"]);
+
         respond_ok(parse_database_row($body, TABLE_MESSAGES));
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);

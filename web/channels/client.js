@@ -367,7 +367,7 @@ async function renderIndividualChannel(channelID) {
 
     currentSelectedChannel = channel;
 
-    fetchAndRenderMessages(channelID);
+    fetchAndRenderMessages(channelID).then(scrollMessagesToBottom);
 
 
     global.setBreadcrumb(["Chats", name], ["./", `#${channelID}`])
@@ -494,7 +494,11 @@ messageInput.addEventListener("keydown", async (event) => {
 
         message.author = (await global.getCurrentSession()).employee;
 
-        return renderMessage(res.data);
+        moveSelectedChannelToTop();
+
+        await renderMessage(res.data);
+        scrollMessagesToBottom();
+        return;
     }
 
     global.popupAlert(
@@ -504,3 +508,14 @@ messageInput.addEventListener("keydown", async (event) => {
     );
 
 });
+
+function scrollMessagesToBottom() {
+    channelMessages.scrollTop = channelMessages.scrollHeight;
+}
+
+function moveSelectedChannelToTop() {
+    const listElement = document.querySelector('.channel.selected');
+    if (listElement) {
+        channelList.prepend(listElement);
+    }
+}

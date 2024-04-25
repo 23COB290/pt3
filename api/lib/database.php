@@ -2259,6 +2259,37 @@ function db_channel_set_last_accessed(string $channel_id, string $emp_id) {
     }
 }
 
+function db_channel_set_last_accessed_bulk(string $channel_id, Array $employee_ids) {
+    global $db;
+
+    $bin_c_id = hex2bin($channel_id);
+    $time = timestamp();
+
+    $values = array_merge(...array_map(function ($emp_id) use ($bin_c_id, $time) {
+        return [hex2bin($emp_id), $bin_c_id, $time];
+    }, $employee_ids));
+
+    $values[] = $time;
+
+    $query = $db->prepare(
+        "INSERT INTO `CHANNEL_ACCESSED` VALUES " . create_chunked_array_binding(count($employee_ids), 3) . "
+        ON DUPLICATE KEY UPDATE channelAccessLastAccessed = ?
+        "
+    );
+
+    $query->bind_param(
+        str_repeat("sss", count($employee_ids)) . "s",
+        ...$values
+    );
+
+    if (!$query->execute()) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
+
+}
+
 
 function db_messages_fetchall(string $channel_id) {
     global $db;
