@@ -2266,7 +2266,7 @@ function db_messages_fetchall(string $channel_id) {
     $bin_c_id = hex2bin($channel_id);
 
     $query = $db->prepare(
-        "SELECT `MESSAGES`.*, `EMPLOYEES`.* FROM `MESSAGES`
+        "SELECT `MESSAGES`.*, `EMPLOYEES`.*, `ASSETS`.contentType FROM `MESSAGES`
         LEFT JOIN `EMPLOYEES`
             ON `MESSAGES`.author = `EMPLOYEES`.empID
         LEFT JOIN `ASSETS`
