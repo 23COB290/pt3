@@ -2157,6 +2157,39 @@ function db_channel_dm_fetch(string $employee1_id, string $employee2_id) {
     return bin2hex($row["channelID"]);
 }
 
+function db_channel_fetch(string $channel_id) {
+    global $db;
+
+    $bin_c_id = hex2bin($channel_id);
+
+    $query = $db->prepare(
+        "SELECT 
+            `CHANNELS`.*,
+            GROUP_CONCAT(`CHANNEL_MEMBER`.empID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as members
+        FROM `CHANNELS`
+        LEFT JOIN `CHANNEL_MEMBER`
+            ON `CHANNEL_MEMBER`.channelID = `CHANNELS`.channelID
+        WHERE `CHANNELS`.channelID = ?
+        GROUP BY `CHANNELS`.channelID
+        "
+    );
+    $query->bind_param("s", $bin_c_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+    
+    if ($res->num_rows == 0) {
+        return false;
+    }
+    
+    $row = $res->fetch_assoc();
+
+    return parse_database_row($row, TABLE_CHANNEL, ["members"=>"a-binary"]);
+}
+
 
 function db_channel_dm_bind_members(string $channel_id, string $employee1_id, string $employee2_id) {
     global $db;
@@ -2226,6 +2259,36 @@ function db_channel_set_last_accessed(string $channel_id, string $emp_id) {
     }
 }
 
+
+function db_messages_fetchall(string $channel_id) {
+    global $db;
+
+    $bin_c_id = hex2bin($channel_id);
+
+    $query = $db->prepare(
+        "SELECT `MESSAGES`.*, `EMPLOYEES`.* FROM `MESSAGES`
+        LEFT JOIN `EMPLOYEES`
+            ON `MESSAGES`.author = `EMPLOYEES`.empID
+        LEFT JOIN `ASSETS`
+            ON `ASSETS`.assetID = `EMPLOYEES`.avatar
+        WHERE `MESSAGES`.channelID = ?
+        "
+    );
+    $query->bind_param("s", $bin_c_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+    
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_MESSAGES);
+        array_push($data, $encoded);
+    }
+    return $data;
+}
 
 
 ?>

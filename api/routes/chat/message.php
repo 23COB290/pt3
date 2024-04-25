@@ -24,7 +24,7 @@ const MESSAGE_MESSAGE_CHECKS = [
         "author_authored_message"
     ],
     "POST"=>[
-        "duo_arg",
+        "solo_arg",
         "channel_exists",
         "user_in_channel",
     ],
@@ -54,15 +54,19 @@ function r_chat_messages(RequestContext $ctx, string $args) {
     object_check_user_in_channel($ctx, $resource_specifiers);
 
     // needs pagination
+    $messages = db_messages_fetchall($resource_specifiers[0]);
+    respond_ok(array(
+        "messages" => $messages
+    ));
 }
 
 function _new_message(RequestContext $ctx, array $body, array $url_specifiers) {
-    $author_id = $ctx->session->hex_associated_user_id;
-    $channel_id = $url_specifiers[0];
+    $author_id = hex2bin($ctx->session->hex_associated_user_id);
+    $channel_id = hex2bin($url_specifiers[0]);
 
     $msgID = generate_uuid();
     $createdAt = timestamp();
-    $content = $body["content"];
+    $content = $body["messageContent"];
 
 
     if (db_generic_new(

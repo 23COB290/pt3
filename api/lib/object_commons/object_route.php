@@ -15,7 +15,8 @@ const OBJECT_GENERIC_NEW_FUNCS = [
     "`POSTS`"=>"_new_post",
     "`PROJECTS`"=>"_new_project",
     "`EMPLOYEE_PERSONALS`"=>"_new_personal",
-    "`TAGS`"=>"_new_tag"
+    "`TAGS`"=>"_new_tag",
+    "`MESSAGES`"=>"_new_message",
 ];
 
 const OBJECT_GENERIC_FETCH_FUNCS = [
