@@ -1,6 +1,7 @@
 
 const CHANNEL_TYPE_DM = 0;
 const CHANNEL_TYPE_GROUP = 1;
+import { left } from "../global-topbar.js";
 import * as global from "../global-ui.js"
 
 
@@ -419,6 +420,10 @@ async function renderMessage(message) {
     const messageElement = document.createElement('div');
     messageElement.classList.add('message');
 
+    const leftWrapper = document.createElement('div');
+    leftWrapper.classList.add('message-left-wrapper');
+
+
     //adds the avatar to the message
     const avatar = document.createElement('img');
     avatar.src = global.employeeAvatarOrFallback(message.author);
@@ -448,42 +453,31 @@ async function renderMessage(message) {
     contentWrapper.appendChild(content);
 
 
-    messageElement.appendChild(avatar);
-    messageElement.appendChild(contentWrapper);
+    leftWrapper.appendChild(avatar);
+    leftWrapper.appendChild(contentWrapper);
+
+    messageElement.appendChild(leftWrapper);
+
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.classList.add('message-buttons');
+
+
+    buttonWrapper.innerHTML = `<div class="icon-button no-box edit">
+        <div class="button-icon">
+            <span class="material-symbols-rounded">edit</span>
+        </div>
+    </div>
+    <div class="icon-button no-box delete modal-skippable">
+        <div class="button-icon">
+            <span class="material-symbols-rounded">delete</span>
+        </div>
+    </div>`
+
+    messageElement.appendChild(buttonWrapper);
+
+
 
     channelMessages.appendChild(messageElement);
-
-
-    // messageElement.innerHTML = `
-    //     <div class="personal-main">
-    //         <div class="personal-content">
-    //             <div class="personal-title">
-    //                 <div class="title-text">
-    //                     ${personal.title}
-    //                 </div>
-    //             </div>
-    //         </div>
-            
-    //         <div class="personal-icons">
-    //             <div class="icon-button no-box edit">
-    //                 <div class="button-icon">
-    //                     <span class="material-symbols-rounded">edit</span>
-    //                 </div>
-    //             </div>
-    //             <div class="icon-button no-box delete modal-skippable">
-    //                 <div class="button-icon">
-    //                     <span class="material-symbols-rounded">delete</span>
-    //                 </div>
-    //             </div>
-    //         </div>
-            
-    //         <div class="text-button blue save norender">
-    //             <div class="button-text">
-    //                 Save
-    //             </div>
-    //         </div>
-    //     </div>
-    // `
     
 }
 

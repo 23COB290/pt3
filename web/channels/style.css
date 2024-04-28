@@ -440,7 +440,15 @@
     display:flex;
     flex-direction: row;
     gap: 0.5em;
-    padding: 0.5em 0;
+    padding: 0.5em 0; 
+    justify-content: space-between;
+
+
+    .message-left-wrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5em;
+    }
 
     .message-avatar {
         width: 3rem;
@@ -455,6 +463,20 @@
             font-weight: 700;
         }
 
+    }
+
+    &:hover {
+        .message-buttons {
+            opacity: 1;
+        }
+    }
+
+    .message-buttons {
+        opacity: 0;
+        display: flex;
+        flex-direction: row;
+        gap: 0.25em;
+        align-self: flex-end;
     }
 
 }
