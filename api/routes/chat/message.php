@@ -2,7 +2,7 @@
 require("lib/context.php");
 require_once("lib/object_commons/object_route.php");
 
-const MESSAGE_MESSAGE_CHECKS = [
+const MESSAGE_CHECKS = [
     "DELETE"=>[
         "duo_arg",
         "channel_exists",
@@ -33,7 +33,7 @@ const MESSAGE_MESSAGE_CHECKS = [
 
 
 function r_chat_message(RequestContext $ctx, string $args) {
-    object_manipulation_generic(MESSAGE_MESSAGE_CHECKS, TABLE_MESSAGES, $ctx, $args);
+    object_manipulation_generic(MESSAGE_CHECKS, TABLE_MESSAGES, $ctx, $args);
 }
 
 function r_chat_messages(RequestContext $ctx, string $args) {
