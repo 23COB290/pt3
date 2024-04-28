@@ -196,7 +196,7 @@ async function newChannelPopup() {
 }
 
 
-
+// displays channel icon of chat
 function renderChannelIcon(channel) {
     switch (channel.type) {
         case CHANNEL_TYPE_DM:
@@ -231,7 +231,7 @@ function getChannelName(channel) {
     }
 }
 
-
+// displays members in chat
 function renderChannelMember(emp) {
 
     const name = global.employeeToName(emp);
@@ -255,6 +255,7 @@ function renderChannelMember(emp) {
     return channelMember;
 }
 
+// displays chats in chat list
 function renderChannelInList(channel, members) {
 
     const element = document.createElement('a');
@@ -302,7 +303,7 @@ async function fetchAndRenderChannels() {
     if (!res.success) {
         return;
     }
-
+    // removes chats from list
     channelList.replaceChildren();
 
     const me = (await global.getCurrentSession()).employee;
@@ -345,7 +346,7 @@ async function fetchAndRenderChannels() {
 
 fetchAndRenderChannels();
 
-
+// determines if no channel selected message appears or if channel appears
 function setChannelDetailsVisiblity(visible) {
     if (visible) {
         channelDetails.classList.remove('norender');
@@ -367,10 +368,10 @@ async function renderIndividualChannel(channelID) {
     }
 
     currentSelectedChannel = channel;
-
+    // renders messages in selected channel and scrolls to bottom
     fetchAndRenderMessages(channelID).then(scrollMessagesToBottom);
 
-
+    // displays new breadcrumb on page
     global.setBreadcrumb(["Chats", name], ["./", `#${channelID}`])
     setChannelDetailsVisiblity(true);
 
@@ -378,6 +379,7 @@ async function renderIndividualChannel(channelID) {
         elem.classList.remove('selected');
     });
 
+    // updates visual of chat on chat list
     const listElement = document.getElementById(`channel-${channelID}`);
     if (listElement) {
         listElement.classList.add('selected');
@@ -387,9 +389,9 @@ async function renderIndividualChannel(channelID) {
     channelName.textContent = name;
 
     channelIcon.replaceChildren(renderChannelIcon(channel));
-
+    // clears channel members from previous chat
     channelMembers.replaceChildren();
-
+    //adds members to channelMembers
     for (const member of channel.richMembers) {
         channelMembers.appendChild(renderChannelMember(member));
     }
@@ -397,12 +399,13 @@ async function renderIndividualChannel(channelID) {
 }
 
 async function fetchAndRenderMessages(channelID) {
+    // gets messages from api for the current chat
     const res = await get_api(`/chat/message.php/messages/${channelID}`);
 
     if (!res.success) {
         return;
     }
-
+    // removes messages from previous chat from channelMessages
     channelMessages.replaceChildren();
 
     const messages = res.data.messages;
@@ -461,7 +464,7 @@ async function renderMessage(message) {
     const buttonWrapper = document.createElement('div');
     buttonWrapper.classList.add('message-buttons');
 
-
+    // adds buttons to message e.g. edit, delete
     buttonWrapper.innerHTML = `<div class="icon-button no-box edit">
         <div class="button-icon">
             <span class="material-symbols-rounded">edit</span>
@@ -482,7 +485,7 @@ async function renderMessage(message) {
 }
 
 
-
+// uses the breadcrumb to navigate to a chat page
 async function renderFromBreadcrumb(locations) {
 
     global.setBreadcrumb(["Chats"], ["./"])
@@ -503,6 +506,7 @@ window.addEventListener("breadcrumbnavigate", (e) => {
 
 
 messageInput.addEventListener("keydown", async (event) => {
+    // ignore keys that aren't enter or if shift is held
     if (event.key !== "Enter" || event.shiftKey) {
         return;
     }
@@ -511,10 +515,12 @@ messageInput.addEventListener("keydown", async (event) => {
     
     const content = messageInput.textContent.trim();
 
+    // makes api request, sends to server
     const res = await post_api(`/chat/message.php/message/${currentSelectedChannel.channelID}`, {
         content: content
     });
 
+    // if sending is successful, display message
     if (res.success) {
         messageInput.textContent = "";
 
@@ -528,7 +534,7 @@ messageInput.addEventListener("keydown", async (event) => {
         scrollMessagesToBottom();
         return;
     }
-
+    // display error to user
     global.popupAlert(
         "Unable to send message",
         `The following error occurred: ${res.error.message} (${res.error.code})`,
