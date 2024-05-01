@@ -2322,5 +2322,42 @@ function db_messages_fetchall(string $channel_id) {
     return $data;
 }
 
+function db_message_delete(string $message_id) {
+    global $db;
+    $bin_m_id = hex2bin($message_id);
+    $query = $db->prepare(
+        "DELETE FROM `MESSAGES` WHERE msgID = ?"
+    );
+    $query->bind_param("s", $bin_m_id);
+    $query->execute();
+    return $query->affected_rows > 0;
+}
+
+function db_message_fetch(string $message_id) {
+    global $db;
+    $bin_m_id = hex2bin($message_id);
+    $query = $db->prepare(
+        "SELECT `MESSAGES`.*, `EMPLOYEES`.*, `ASSETS`.contentType FROM `MESSAGES`
+        LEFT JOIN `EMPLOYEES`
+            ON `MESSAGES`.author = `EMPLOYEES`.empID
+        LEFT JOIN `ASSETS`
+            ON `ASSETS`.assetID = `EMPLOYEES`.avatar
+        WHERE `MESSAGES`.msgID = ?
+        "
+    );
+    $query->bind_param("s", $bin_m_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+    if ($res->num_rows == 0) {
+        return false;
+    }
+    $row = $res->fetch_assoc();
+
+    return parse_database_row($row, TABLE_MESSAGES);
+}
 
 ?>
