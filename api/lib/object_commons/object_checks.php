@@ -257,5 +257,22 @@ function object_check_user_in_channel(RequestContext $ctx, array $resource_ids) 
     }
 }
 
+function object_check_message_exists(RequestContext $ctx, array $resource_ids) {
+    $msg = db_message_fetch($resource_ids[1]);
+    if (!$msg) {
+        respond_resource_not_found("message ". $resource_ids[1]);
+    }
+    if (!$msg["channel"]["channelID"] == $resource_ids[0]) {
+        respond_resource_not_found("message ". $resource_ids[1]);
+    }
+    $ctx->message = $msg;
+}
+
+function object_check_author_authored_message(RequestContext $ctx, array $resource_ids) {
+    $author = $ctx->session->hex_associated_user_id;
+    if ($author != $ctx->message["author"]["empID"]) {
+        respond_insufficient_authorization();
+    }
+}
 
 ?>

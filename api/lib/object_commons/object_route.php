@@ -32,7 +32,8 @@ const OBJECT_GENERIC_EDIT_FUNCS = [
     "`EMPLOYEE_PERSONALS`"=>"_edit_personal",
     "`PROJECTS`"=>"_edit_project",
     "`TAGS`"=>"_use_common_edit",
-    "`EMPLOYEE_PERSONALS`"=>"_use_common_edit"
+    "`EMPLOYEE_PERSONALS`"=>"_use_common_edit",
+    "`MESSAGES`"=>"_edit_message",
 ];
 
 const OBJECT_GENERIC_DELETE_FUNCS = [
@@ -41,6 +42,7 @@ const OBJECT_GENERIC_DELETE_FUNCS = [
     "`POSTS`"=>"_delete_post",
     "`EMPLOYEE_PERSONALS`"=>"_delete_personal",
     "`TAGS`"=>"_delete_tag",
+    "`MESSAGES`"=>"_delete_message",
 ];
 
 
