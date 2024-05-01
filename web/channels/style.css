@@ -133,6 +133,9 @@
                 align-items: center;
                 gap: 0.75rem;
 
+                border-bottom: var(--border-clr) 1px solid;
+                padding-bottom: 0.5rem;
+
                 #channel-icon-wrapper {
 
                     display:flex;
@@ -442,6 +445,11 @@
     gap: 0.5em;
     padding: 0.5em 0; 
     justify-content: space-between;
+    border-radius: 4px;
+
+    &:hover {
+        background-color: var(--make-it-all-tint)
+    }
 
 
     .message-left-wrapper {

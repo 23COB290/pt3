@@ -374,6 +374,8 @@ async function renderIndividualChannel(channelID) {
         return;
     }
 
+    channelMessages.replaceChildren();
+
     messageInput.setAttribute("placeholder", `Message ${name}`)
 
     currentSelectedChannel = channel;
@@ -430,6 +432,7 @@ async function fetchAndRenderMessages(channelID) {
 async function renderMessage(message) {
     //makes the div for the message
     const messageElement = document.createElement('div');
+    messageElement.id = `${message.msgID}`;
     messageElement.classList.add('message');
 
     const leftWrapper = document.createElement('div');
@@ -474,6 +477,14 @@ async function renderMessage(message) {
     buttonWrapper.classList.add('message-buttons');
 
     // adds buttons to message e.g. edit, delete
+
+    const session = await global.getCurrentSession();
+
+    if (session.employee.empID != message.author.empID) {
+        channelMessages.appendChild(messageElement);
+        return;
+    }
+
     buttonWrapper.innerHTML = `<div class="icon-button no-box edit">
         <div class="button-icon">
             <span class="material-symbols-rounded">edit</span>
@@ -484,10 +495,27 @@ async function renderMessage(message) {
             <span class="material-symbols-rounded">delete</span>
         </div>
     </div>`
+    
 
     messageElement.appendChild(buttonWrapper);
 
+    const deleteButton = messageElement.querySelector('.delete');
+    deleteButton.addEventListener('pointerup', async () => {
 
+        await confirmDelete();
+
+        const res = await delete_api(`/chat/message.php/message/${message.channel.channelID}/${message.msgID}`);
+
+        if (res.success) {
+            messageElement.remove();
+            return;
+        }
+        global.popupAlert(
+            "Unable to delete message",
+            `The following error occurred: ${res.error.message} (${res.error.code})`,
+            "error"
+        );
+    });
 
     channelMessages.appendChild(messageElement);
     
@@ -561,4 +589,24 @@ function moveSelectedChannelToTop() {
     if (listElement) {
         channelList.prepend(listElement);
     }
+}
+
+function confirmDelete() {
+
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+        <div class="popup-text">Are you sure you want to delete this message?</div>
+        <div class="popup-text">This will delete this message for everyone</div>
+        `
+    }
+
+    return global.popupModal(
+        true,
+        "Delete message",
+        callback,
+        {
+            text: "Delete",
+            class: "red",
+        }
+    )
 }
