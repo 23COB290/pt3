@@ -174,12 +174,13 @@ async function newChannelPopup() {
     };
 
     if (channelType === CHANNEL_TYPE_GROUP) {
-        body.name = groupName.value ?? null;
+        body.name = groupName.value ? groupName.value : null;
         body.recipients = [...recipients];
     } else {
         body.recipient = [...recipients][0];
         body.name = null;
     }
+
 
     const res = await post_api("/chat/channel.php/channel", body);
 
@@ -226,9 +227,15 @@ function renderChannelIcon(channel) {
 function getChannelName(channel) {
     if (channel.type === CHANNEL_TYPE_DM) {
         return global.employeeToName(channel.recipient);
-    } else {
+
+    }
+
+    if (channel.name) {
         return channel.name;
     }
+
+    return channel.richMembers.map((emp) => global.employeeToName(emp)).join(", ");
+    
 }
 
 // displays members in chat
@@ -366,6 +373,8 @@ async function renderIndividualChannel(channelID) {
     if (!channel) {
         return;
     }
+
+    messageInput.setAttribute("placeholder", `Message ${name}`)
 
     currentSelectedChannel = channel;
     // renders messages in selected channel and scrolls to bottom
