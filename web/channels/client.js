@@ -428,6 +428,9 @@ async function fetchAndRenderMessages(channelID) {
 
 }
 
+let editingMsg = false
+let messageBeingEdited
+
 //displays the selected message to the user
 async function renderMessage(message) {
     //makes the div for the message
@@ -517,6 +520,16 @@ async function renderMessage(message) {
         );
     });
 
+    const editButton = messageElement.querySelector('.edit');
+    editButton.addEventListener('pointerup', async () => {
+        //display edit message interface
+        let currentMsgContent = messageElement.querySelector('.message-content').innerText
+        messageInput.innerHTML = currentMsgContent
+        editingMsg = true
+        console.log(editingMsg)
+        messageBeingEdited = messageElement.id
+    });
+
     channelMessages.appendChild(messageElement);
     
 }
@@ -541,7 +554,6 @@ window.addEventListener("breadcrumbnavigate", (e) => {
     renderFromBreadcrumb(e.locations);
 });
 
-
 messageInput.addEventListener("keydown", async (event) => {
     // ignore keys that aren't enter or if shift is held
     if (event.key !== "Enter" || event.shiftKey) {
@@ -552,31 +564,56 @@ messageInput.addEventListener("keydown", async (event) => {
     
     const content = messageInput.textContent.trim();
 
-    // makes api request, sends to server
-    const res = await post_api(`/chat/message.php/message/${currentSelectedChannel.channelID}`, {
-        content: content
-    });
+    console.log(editingMsg)
+    if (!editingMsg) {
+        // makes api request, sends new message to server
+        const res = await post_api(`/chat/message.php/message/${currentSelectedChannel.channelID}`, {
+            content: content
+        });
 
-    // if sending is successful, display message
-    if (res.success) {
-        messageInput.textContent = "";
+        // if sending is successful, display message
+        if (res.success) {
+            messageInput.textContent = "";
 
-        let message = res.data;
+            let message = res.data;
 
-        message.author = (await global.getCurrentSession()).employee;
+            message.author = (await global.getCurrentSession()).employee;
 
-        moveSelectedChannelToTop();
+            moveSelectedChannelToTop();
 
-        await renderMessage(res.data);
-        scrollMessagesToBottom();
-        return;
+            await renderMessage(res.data);
+            scrollMessagesToBottom();
+            return;
+        }
+        // display error to user
+        global.popupAlert(
+            "Unable to send message",
+            `The following error occurred: ${res.error.message} (${res.error.code})`,
+            "error"
+        );
+    } else {
+        // edit the selected message
+        const res = await patch_api(`/chat/message.php/message/${currentSelectedChannel.channelID}/${messageBeingEdited}`, {
+            content: content
+        });
+
+        // if sending is successful, change displayed message
+        if (res.success) {
+            //change content of message element.
+            document.querySelector(`#${messageBeingEdited} .message-content`).innerText = content
+            messageInput.textContent = "";
+            editingMsg = false
+            messageBeingEdited = null
+            return;
+        }
+
+        // display error to user
+        global.popupAlert(
+            "Unable to edit message",
+            `The following error occurred: ${res.error.message} (${res.error.code})`,
+            "error"
+        );
     }
-    // display error to user
-    global.popupAlert(
-        "Unable to send message",
-        `The following error occurred: ${res.error.message} (${res.error.code})`,
-        "error"
-    );
 
 });
 
