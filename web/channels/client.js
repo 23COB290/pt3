@@ -493,9 +493,13 @@ async function renderMessage(message) {
 
     lastMessageTimestamp = message.createdAt;
 
+    if (document.getElementById(`message-${message.msgID}`)) {
+        return;
+    }
+
     //makes the div for the message
     const messageElement = document.createElement('div');
-    messageElement.id = `${message.msgID}`;
+    messageElement.id = `message-${message.msgID}`;
     messageElement.classList.add('message');
 
     const leftWrapper = document.createElement('div');
