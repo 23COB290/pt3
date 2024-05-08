@@ -460,7 +460,7 @@ async function renderIndividualChannel(channelID) {
     for (const member of channel.richMembers) {
         channelMembers.appendChild(renderChannelMember(
             member,
-            channel.type == CHANNEL_TYPE_GROUP && member.empID == channel.owner
+            channel.type == CHANNEL_TYPE_GROUP && member.empID == channel.owner.empID
         ));
     }
 
