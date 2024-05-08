@@ -550,7 +550,8 @@ messageInput.addEventListener("keydown", async (event) => {
 
     event.preventDefault();
     
-    const content = messageInput.textContent.trim();
+    // we dont need to worry about safety as it is rendered with innerText
+    const content = messageInput.innerHTML.trim().replaceAll("<br>", "\n");
 
     // makes api request, sends to server
     const res = await post_api(`/chat/message.php/message/${currentSelectedChannel.channelID}`, {
