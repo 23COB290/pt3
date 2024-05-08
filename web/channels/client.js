@@ -532,7 +532,8 @@ async function renderMessage(message) {
 
     if (message.editedAt) {
         const editedAt = global.howLongAgo(message.editedAt);
-        details.appendChild(renderMessageTimestamp(`Edited at ${editedAt}`));
+        details.appendChild(renderMessageTimestamp(`edited ${editedAt}`));
+        messageElement.classList.add('edited');
     }
 
     //content of the messages
@@ -610,12 +611,16 @@ async function renderMessage(message) {
 
     const deleteButton = messageElement.querySelector('.delete');
     deleteButton.addEventListener('pointerup', async () => {
-        // when delete button clicked
+
+
         await confirmDelete();
+
+
         // delete message on backend
         const res = await delete_api(`/chat/message.php/message/${message.channel.channelID}/${message.msgID}`);
-        // remove message from browser view
+
         if (res.success) {
+            // remove message from browser view
             messageElement.remove();
             return;
         }
@@ -633,7 +638,7 @@ async function renderMessage(message) {
         messageInput.innerHTML = currentMsgContent
         editingMsg = true
         console.log(editingMsg)
-        messageBeingEdited = messageElement.id
+        messageBeingEdited = message
     });
 
     channelMessages.appendChild(messageElement);
@@ -707,14 +712,14 @@ messageInput.addEventListener("keydown", async (event) => {
         );
     } else {
         // edit the selected message
-        const res = await patch_api(`/chat/message.php/message/${currentSelectedChannel.channelID}/${messageBeingEdited}`, {
+        const res = await patch_api(`/chat/message.php/message/${currentSelectedChannel.channelID}/${messageBeingEdited.msgID}`, {
             content: content
         });
 
         // if sending is successful, change displayed message
         if (res.success) {
             //change content of message element.
-            document.querySelector(`#${messageBeingEdited} .message-content`).innerText = content
+            document.querySelector(`#message-${messageBeingEdited.msgID} .message-content`).innerText = content
             messageInput.textContent = "";
             editingMsg = false
             messageBeingEdited = null

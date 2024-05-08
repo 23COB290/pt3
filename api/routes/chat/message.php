@@ -117,7 +117,7 @@ function _delete_message(RequestContext $ctx, array $url_specifiers) {
 
 function _edit_message(RequestContext $ctx, array $body, array $url_specifiers) {
 
-    $body["editedAt"] = timestamp();
+    $body["messageEditedAt"] = timestamp();
 
     _use_common_edit(TABLE_MESSAGES, $body, $url_specifiers);
 }

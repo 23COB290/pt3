@@ -497,7 +497,7 @@
         .message-details {
             display: flex;
             flex-direction: row;
-            gap: 0.25em;
+            gap: 0.35em;
 
             align-items: center;
 
