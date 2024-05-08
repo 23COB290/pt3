@@ -456,7 +456,17 @@ async function renderMessage(message) {
     const author = document.createElement('div');
     author.classList.add('message-author');
     author.textContent = global.employeeToName(message.author);
+    
     details.appendChild(author);
+
+    const createdAt = global.howLongAgo(message.createdAt);
+
+    details.appendChild(renderMessageTimestamp(createdAt));
+
+    if (message.editedAt) {
+        const editedAt = global.howLongAgo(message.editedAt);
+        details.appendChild(renderMessageTimestamp(`Edited at ${editedAt}`));
+    }
 
     //content of the messages
     const content = document.createElement('div');
@@ -519,6 +529,13 @@ async function renderMessage(message) {
 
     channelMessages.appendChild(messageElement);
     
+}
+
+function renderMessageTimestamp(text) {
+    const element = document.createElement('div');
+    element.classList.add('message-timestamp');
+    element.textContent = text;
+    return element;
 }
 
 
