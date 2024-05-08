@@ -280,7 +280,8 @@
 
     .channel-actions {
         opacity: 0;
-
+        display: flex;
+        align-items: center;
         &:hover {
             opacity: 1 !important;
         }
@@ -451,6 +452,14 @@
         background-color: var(--make-it-all-tint)
     }
 
+    &.edited {
+        .message-content::after {
+            content: " (edited)";
+            font-size: 0.75em;
+            opacity: 0.7;
+        }
+    }
+
 
     .message-left-wrapper {
         display: flex;
@@ -467,10 +476,22 @@
 
     .message-content-wrapper {
 
-        .message-author {
-            font-weight: 700;
-        }
+        .message-details {
+            display: flex;
+            flex-direction: row;
+            gap: 0.25em;
 
+            align-items: center;
+
+            .message-author {
+                font-weight: 700;
+            }
+    
+            .message-timestamp {
+                font-size: 0.75em;
+                opacity: 0.7;
+            }
+        }
     }
 
     &:hover {

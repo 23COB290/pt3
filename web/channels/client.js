@@ -459,7 +459,17 @@ async function renderMessage(message) {
     const author = document.createElement('div');
     author.classList.add('message-author');
     author.textContent = global.employeeToName(message.author);
+    
     details.appendChild(author);
+
+    const createdAt = global.howLongAgo(message.createdAt);
+
+    details.appendChild(renderMessageTimestamp(createdAt));
+
+    if (message.editedAt) {
+        const editedAt = global.howLongAgo(message.editedAt);
+        details.appendChild(renderMessageTimestamp(`Edited at ${editedAt}`));
+    }
 
     //content of the messages
     const content = document.createElement('div');
@@ -534,6 +544,13 @@ async function renderMessage(message) {
     
 }
 
+function renderMessageTimestamp(text) {
+    const element = document.createElement('div');
+    element.classList.add('message-timestamp');
+    element.textContent = text;
+    return element;
+}
+
 
 // uses the breadcrumb to navigate to a chat page
 async function renderFromBreadcrumb(locations) {
@@ -562,7 +579,8 @@ messageInput.addEventListener("keydown", async (event) => {
 
     event.preventDefault();
     
-    const content = messageInput.textContent.trim();
+    // we dont need to worry about safety as it is rendered with innerText
+    const content = messageInput.innerHTML.trim().replaceAll("<br>", "\n");
 
     console.log(editingMsg)
     if (!editingMsg) {
