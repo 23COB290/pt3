@@ -243,6 +243,10 @@
         width: 2em;
         height: 2em;
     }
+
+    .owner-icon {
+        font-size: 1.5em;
+    }
 }
 
 

@@ -239,7 +239,7 @@ function getChannelName(channel) {
 }
 
 // displays members in chat
-function renderChannelMember(emp) {
+function renderChannelMember(emp, isOwner = false) {
 
     const name = global.employeeToName(emp);
     const avatar = global.employeeAvatarOrFallback(emp);
@@ -258,6 +258,13 @@ function renderChannelMember(emp) {
 
     channelMember.appendChild(avatarElem);
     channelMember.appendChild(nameElem);
+
+    if (isOwner) {
+        const icon = document.createElement('span');
+        icon.classList.add('material-symbols-rounded', 'owner-icon');
+        icon.textContent = "star";
+        channelMember.appendChild(icon);
+    }
 
     return channelMember;
 }
@@ -404,7 +411,10 @@ async function renderIndividualChannel(channelID) {
     channelMembers.replaceChildren();
     //adds members to channelMembers
     for (const member of channel.richMembers) {
-        channelMembers.appendChild(renderChannelMember(member));
+        channelMembers.appendChild(renderChannelMember(
+            member,
+            channel.type == CHANNEL_TYPE_GROUP && member.empID == channel.owner
+        ));
     }
 
 }
