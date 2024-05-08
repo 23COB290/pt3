@@ -452,6 +452,20 @@
     justify-content: space-between;
     border-radius: 4px;
 
+    &.system {
+        .message-content-wrapper {
+            display:flex;
+            flex-direction: row;
+            gap: 0.5em;
+
+
+            .message-content {
+                align-content: center;
+                font-style: italic;
+            }
+        }
+    }
+
     &:hover {
         background-color: var(--make-it-all-tint)
     }

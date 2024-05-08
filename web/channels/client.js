@@ -1,6 +1,13 @@
 
 const CHANNEL_TYPE_DM = 0;
 const CHANNEL_TYPE_GROUP = 1;
+
+const MESSAGE_TYPE_MESSAGE = 0;
+const MESSAGE_TYPE_ADDED = 1;
+const MESSAGE_TYPE_LEAVE = 2;
+const MESSAGE_TYPE_NEW_GROUP = 3;
+const MESSAGE_TYPE_REMOVED = 4;
+
 import { left } from "../global-topbar.js";
 import * as global from "../global-ui.js"
 
@@ -301,6 +308,44 @@ function renderChannelInList(channel, members) {
 
     close.textContent = "close"
 
+    close.addEventListener('pointerup', async (e) => {
+
+        if (e.button !== 0) {
+            return;
+        }
+
+
+        if (channel.type != CHANNEL_TYPE_DM) {
+            await confirmLeave(getChannelName(channel));
+        }
+
+        const res = await delete_api(`/chat/channel.php/list/${channel.channelID}`);
+
+        if (res.success) {
+            element.remove();
+            setChannelDetailsVisiblity(false);
+            return;
+        }
+
+        global.popupAlert(
+            "Unable to delete channel",
+            `The following error occurred: ${res.error.message} (${res.error.code})`,
+            "error"
+        );
+    });
+
+    element.addEventListener('click', (event) => {
+        // stop rendering if clicked on close button
+        if (event.target === close) {
+            event.preventDefault();
+        }
+
+        // stop rendering if already selected
+        if (element.classList.contains('selected')) {
+            event.preventDefault();
+        }
+    });
+
     actions.appendChild(close);
 
     element.appendChild(icon);
@@ -370,6 +415,8 @@ function setChannelDetailsVisiblity(visible) {
         channelDetails.classList.add('norender');
     }
 }
+
+
 
 async function renderIndividualChannel(channelID) {
 
@@ -443,6 +490,9 @@ let messageBeingEdited
 
 //displays the selected message to the user
 async function renderMessage(message) {
+
+    lastMessageTimestamp = message.createdAt;
+
     //makes the div for the message
     const messageElement = document.createElement('div');
     messageElement.id = `${message.msgID}`;
@@ -482,13 +532,45 @@ async function renderMessage(message) {
     }
 
     //content of the messages
-    const content = document.createElement('div');
-    content.classList.add('message-content');
-    content.innerText = message.content;
-
 
     contentWrapper.appendChild(details);
-    contentWrapper.appendChild(content);
+
+
+    const content = document.createElement('div');
+    content.classList.add('message-content');
+
+
+    if (message.type != MESSAGE_TYPE_MESSAGE) {
+        messageElement.classList.add("system")
+        details.insertBefore(content, details.childNodes[1]);
+
+    } else {
+        contentWrapper.appendChild(content);
+    }
+
+    switch (message.type) {
+        case MESSAGE_TYPE_MESSAGE:
+            content.innerText = message.content;
+            break;
+        
+        case MESSAGE_TYPE_NEW_GROUP:
+            content.innerText = "created this group"
+            break;
+        
+        case MESSAGE_TYPE_ADDED:
+            let added = "placeholder";
+            content.innerText = `added ${added} to the group`;
+            break;
+        
+        case MESSAGE_TYPE_LEAVE:
+            content.innerText = "left the group";
+            break;
+        case MESSAGE_TYPE_REMOVED:
+            let removed = "placeholder";
+            content.innerText = `removed ${removed} from the group`;
+            break;
+
+    }
 
 
     leftWrapper.appendChild(avatar);
@@ -503,7 +585,7 @@ async function renderMessage(message) {
 
     const session = await global.getCurrentSession();
 
-    if (session.employee.empID != message.author.empID) {
+    if (session.employee.empID != message.author.empID || message.type != MESSAGE_TYPE_MESSAGE) {
         channelMessages.appendChild(messageElement);
         return;
     }
@@ -675,3 +757,48 @@ function confirmDelete() {
         }
     )
 }
+
+function confirmLeave(name) {
+
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+        <div class="popup-text">You will no longer be able to see or send messages in this group chat</div>
+        `
+    }
+
+    return global.popupModal(
+        false,
+        `Leave ${name}?`,
+        callback,
+        {
+            text: "Leave",
+            class: "red",
+        }
+    )
+
+}
+
+let lastMessageTimestamp = 0;
+
+async function messageRefresher() {
+
+    // dont refresh if no channel selected
+    if (!noSelectedChannel.classList.contains('norender')) {
+        return;
+    }
+
+    const res = await get_api(`/chat/message.php/messages/${currentSelectedChannel.channelID}?after=${lastMessageTimestamp}`);
+
+    if (!res.success) {
+        return;
+    }
+
+    const messages = res.data.messages;
+
+    for (const message of messages) {
+        renderMessage(message);
+    }
+
+}
+
+setInterval(messageRefresher, 1000);
