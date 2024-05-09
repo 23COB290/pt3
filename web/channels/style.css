@@ -244,6 +244,10 @@
         width: 2em;
         height: 2em;
     }
+
+    .owner-icon {
+        font-size: 1.5em;
+    }
 }
 
 
@@ -449,6 +453,20 @@
     justify-content: space-between;
     border-radius: 4px;
 
+    &.system {
+        .message-content-wrapper {
+            display:flex;
+            flex-direction: row;
+            gap: 0.5em;
+
+
+            .message-content {
+                align-content: center;
+                font-style: italic;
+            }
+        }
+    }
+
     &:hover {
         background-color: var(--make-it-all-tint)
     }
@@ -484,7 +502,7 @@
         .message-details {
             display: flex;
             flex-direction: row;
-            gap: 0.25em;
+            gap: 0.35em;
 
             align-items: center;
 

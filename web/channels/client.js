@@ -1,6 +1,13 @@
 
 const CHANNEL_TYPE_DM = 0;
 const CHANNEL_TYPE_GROUP = 1;
+
+const MESSAGE_TYPE_MESSAGE = 0;
+const MESSAGE_TYPE_ADDED = 1;
+const MESSAGE_TYPE_LEAVE = 2;
+const MESSAGE_TYPE_NEW_GROUP = 3;
+const MESSAGE_TYPE_REMOVED = 4;
+
 import { left } from "../global-topbar.js";
 import * as global from "../global-ui.js"
 
@@ -239,7 +246,7 @@ function getChannelName(channel) {
 }
 
 // displays members in chat
-function renderChannelMember(emp) {
+function renderChannelMember(emp, isOwner = false) {
 
     const name = global.employeeToName(emp);
     const avatar = global.employeeAvatarOrFallback(emp);
@@ -258,6 +265,13 @@ function renderChannelMember(emp) {
 
     channelMember.appendChild(avatarElem);
     channelMember.appendChild(nameElem);
+
+    if (isOwner) {
+        const icon = document.createElement('span');
+        icon.classList.add('material-symbols-rounded', 'owner-icon');
+        icon.textContent = "star";
+        channelMember.appendChild(icon);
+    }
 
     return channelMember;
 }
@@ -293,6 +307,44 @@ function renderChannelInList(channel, members) {
     close.classList.add('material-symbols-rounded');
 
     close.textContent = "close"
+
+    close.addEventListener('pointerup', async (e) => {
+
+        if (e.button !== 0) {
+            return;
+        }
+
+
+        if (channel.type != CHANNEL_TYPE_DM) {
+            await confirmLeave(getChannelName(channel));
+        }
+
+        const res = await delete_api(`/chat/channel.php/list/${channel.channelID}`);
+
+        if (res.success) {
+            element.remove();
+            setChannelDetailsVisiblity(false);
+            return;
+        }
+
+        global.popupAlert(
+            "Unable to delete channel",
+            `The following error occurred: ${res.error.message} (${res.error.code})`,
+            "error"
+        );
+    });
+
+    element.addEventListener('click', (event) => {
+        // stop rendering if clicked on close button
+        if (event.target === close) {
+            event.preventDefault();
+        }
+
+        // stop rendering if already selected
+        if (element.classList.contains('selected')) {
+            event.preventDefault();
+        }
+    });
 
     actions.appendChild(close);
 
@@ -364,6 +416,8 @@ function setChannelDetailsVisiblity(visible) {
     }
 }
 
+
+
 async function renderIndividualChannel(channelID) {
 
 
@@ -404,7 +458,10 @@ async function renderIndividualChannel(channelID) {
     channelMembers.replaceChildren();
     //adds members to channelMembers
     for (const member of channel.richMembers) {
-        channelMembers.appendChild(renderChannelMember(member));
+        channelMembers.appendChild(renderChannelMember(
+            member,
+            channel.type == CHANNEL_TYPE_GROUP && member.empID == channel.owner.empID
+        ));
     }
 
 }
@@ -433,9 +490,16 @@ let messageBeingEdited
 
 //displays the selected message to the user
 async function renderMessage(message) {
+
+    lastMessageTimestamp = message.createdAt;
+
+    if (document.getElementById(`message-${message.msgID}`)) {
+        return;
+    }
+
     //makes the div for the message
     const messageElement = document.createElement('div');
-    messageElement.id = `${message.msgID}`;
+    messageElement.id = `message-${message.msgID}`;
     messageElement.classList.add('message');
 
     const leftWrapper = document.createElement('div');
@@ -468,17 +532,50 @@ async function renderMessage(message) {
 
     if (message.editedAt) {
         const editedAt = global.howLongAgo(message.editedAt);
-        details.appendChild(renderMessageTimestamp(`Edited at ${editedAt}`));
+        details.appendChild(renderMessageTimestamp(`edited ${editedAt}`));
+        messageElement.classList.add('edited');
     }
 
     //content of the messages
-    const content = document.createElement('div');
-    content.classList.add('message-content');
-    content.innerText = message.content;
-
 
     contentWrapper.appendChild(details);
-    contentWrapper.appendChild(content);
+
+
+    const content = document.createElement('div');
+    content.classList.add('message-content');
+
+
+    if (message.type != MESSAGE_TYPE_MESSAGE) {
+        messageElement.classList.add("system")
+        details.insertBefore(content, details.childNodes[1]);
+
+    } else {
+        contentWrapper.appendChild(content);
+    }
+
+    switch (message.type) {
+        case MESSAGE_TYPE_MESSAGE:
+            content.innerText = message.content;
+            break;
+        
+        case MESSAGE_TYPE_NEW_GROUP:
+            content.innerText = "created this group"
+            break;
+        
+        case MESSAGE_TYPE_ADDED:
+            let added = "placeholder";
+            content.innerText = `added ${added} to the group`;
+            break;
+        
+        case MESSAGE_TYPE_LEAVE:
+            content.innerText = "left the group";
+            break;
+        case MESSAGE_TYPE_REMOVED:
+            let removed = "placeholder";
+            content.innerText = `removed ${removed} from the group`;
+            break;
+
+    }
 
 
     leftWrapper.appendChild(avatar);
@@ -493,7 +590,7 @@ async function renderMessage(message) {
 
     const session = await global.getCurrentSession();
 
-    if (session.employee.empID != message.author.empID) {
+    if (session.employee.empID != message.author.empID || message.type != MESSAGE_TYPE_MESSAGE) {
         channelMessages.appendChild(messageElement);
         return;
     }
@@ -514,12 +611,16 @@ async function renderMessage(message) {
 
     const deleteButton = messageElement.querySelector('.delete');
     deleteButton.addEventListener('pointerup', async () => {
-        // when delete button clicked
+
+
         await confirmDelete();
+
+
         // delete message on backend
         const res = await delete_api(`/chat/message.php/message/${message.channel.channelID}/${message.msgID}`);
-        // remove message from browser view
+
         if (res.success) {
+            // remove message from browser view
             messageElement.remove();
             return;
         }
@@ -540,8 +641,8 @@ async function renderMessage(message) {
         messageInput.innerHTML = currentMsgContent
         messageInput.focus()
         editingMsg = true
-        messageBeingEdited = messageElement.id
-        messageElement.classList.add('editing')
+        console.log(editingMsg)
+        messageBeingEdited = message
     });
 
     channelMessages.appendChild(messageElement);
@@ -614,16 +715,14 @@ messageInput.addEventListener("keydown", async (event) => {
         );
     } else {
         // edit the selected message
-        const res = await patch_api(`/chat/message.php/message/${currentSelectedChannel.channelID}/${messageBeingEdited}`, {
+        const res = await patch_api(`/chat/message.php/message/${currentSelectedChannel.channelID}/${messageBeingEdited.msgID}`, {
             content: content
         });
 
         // if sending is successful, change displayed message
         if (res.success) {
             //change content of message element.
-            console.log(messageBeingEdited)
-            document.querySelector(`#${messageBeingEdited} .message-content`).innerText = content
-            document.querySelector(`#${messageBeingEdited}`).classList.remove('editing')
+            document.querySelector(`#message-${messageBeingEdited.msgID} .message-content`).innerText = content
             messageInput.textContent = "";
             editingMsg = false
             messageBeingEdited = null
@@ -671,3 +770,48 @@ function confirmDelete() {
         }
     )
 }
+
+function confirmLeave(name) {
+
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+        <div class="popup-text">You will no longer be able to see or send messages in this group chat</div>
+        `
+    }
+
+    return global.popupModal(
+        false,
+        `Leave ${name}?`,
+        callback,
+        {
+            text: "Leave",
+            class: "red",
+        }
+    )
+
+}
+
+let lastMessageTimestamp = 0;
+
+async function messageRefresher() {
+
+    // dont refresh if no channel selected
+    if (!noSelectedChannel.classList.contains('norender')) {
+        return;
+    }
+
+    const res = await get_api(`/chat/message.php/messages/${currentSelectedChannel.channelID}?after=${lastMessageTimestamp}`);
+
+    if (!res.success) {
+        return;
+    }
+
+    const messages = res.data.messages;
+
+    for (const message of messages) {
+        renderMessage(message);
+    }
+
+}
+
+setInterval(messageRefresher, 1000);

@@ -2102,20 +2102,22 @@ function db_channel_last_accessed_fetchall(string $emp_id) {
 }
 
 
-function db_channel_new(?string $channel_name, int $channel_type) {
+function db_channel_new(?string $channel_name, int $channel_type, string $author_id) {
     global $db;
 
     $bin_c_id = generate_uuid();
+    $bin_a_id = hex2bin($author_id);
     $time = timestamp();
 
     $query = $db->prepare(
-        "INSERT INTO `CHANNELS` VALUES (?, ?, ?, ?)"
+        "INSERT INTO `CHANNELS` VALUES (?, ?, ?, ?, ?)"
     );
-    $query->bind_param("ssis",
+    $query->bind_param("ssiss",
         $bin_c_id,
         $channel_name,
         $channel_type,
-        $time
+        $time,
+        $bin_a_id
     );
     $result = $query->execute();
 
@@ -2238,6 +2240,25 @@ function db_channel_bind_members(string $channel_id, array $emp_ids) {
 
 }
 
+function db_channel_unbind_member(string $channel_id, string $emp_id) {
+    global $db;
+
+    $bin_c_id = hex2bin($channel_id);
+    $bin_e_id = hex2bin($emp_id);
+
+    $query = $db->prepare(
+        "DELETE FROM `CHANNEL_MEMBER` WHERE channelID = ? AND empID = ?"
+    );
+    $query->bind_param("ss", $bin_c_id, $bin_e_id);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
+}
+
 
 function db_channel_set_last_accessed(string $channel_id, string $emp_id) {
     global $db;
@@ -2252,6 +2273,23 @@ function db_channel_set_last_accessed(string $channel_id, string $emp_id) {
         "
     );
     $query->bind_param("ssss", $bin_e_id, $bin_c_id, $time, $time);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+}
+
+function db_channel_delete_last_accessed(string $channel_id, string $emp_id) {
+    global $db;
+
+    $bin_c_id = hex2bin($channel_id);
+    $bin_e_id = hex2bin($emp_id);
+
+    $query = $db->prepare(
+        "DELETE FROM `CHANNEL_ACCESSED` WHERE empID = ? AND channelID = ?"
+    );
+    $query->bind_param("ss", $bin_e_id, $bin_c_id);
     $result = $query->execute();
 
     if (!$result) {
@@ -2291,7 +2329,7 @@ function db_channel_set_last_accessed_bulk(string $channel_id, Array $employee_i
 }
 
 
-function db_messages_fetchall(string $channel_id) {
+function db_messages_fetchall(string $channel_id, int $after) {
     global $db;
 
     $bin_c_id = hex2bin($channel_id);
@@ -2303,10 +2341,15 @@ function db_messages_fetchall(string $channel_id) {
         LEFT JOIN `ASSETS`
             ON `ASSETS`.assetID = `EMPLOYEES`.avatar
         WHERE `MESSAGES`.channelID = ?
+            AND `MESSAGES`.messageCreatedAt > ?
         ORDER BY `MESSAGES`.messageCreatedAt ASC
         "
     );
-    $query->bind_param("s", $bin_c_id);
+    $query->bind_param(
+        "si",
+        $bin_c_id,
+        $after
+    );
     $query->execute();
     $res = $query->get_result();
 
@@ -2358,6 +2401,39 @@ function db_message_fetch(string $message_id) {
     $row = $res->fetch_assoc();
 
     return parse_database_row($row, TABLE_MESSAGES);
+}
+
+
+function db_message_new_system(string $channel_id, string $author_id, int $type, ?string $content=null) {
+    global $db;
+
+    $bin_m_id = generate_uuid();
+
+    $bin_c_id = hex2bin($channel_id);
+    $bin_a_id = hex2bin($author_id);
+    $time = timestamp();
+    $editedAt = null;
+
+    $query = $db->prepare(
+        "INSERT INTO `MESSAGES` VALUES (?, ?, ?, ?, ?, ?, ?)"
+    );
+    $query->bind_param(
+        "sssiiis",
+        $bin_m_id,
+        $bin_c_id,
+        $bin_a_id,
+        $time,
+        $type,
+        $editedAt,
+        $content
+    );
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    return $query->insert_id;
 }
 
 ?>

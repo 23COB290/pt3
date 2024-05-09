@@ -1,8 +1,11 @@
 <?php
 require("lib/context.php");
+require_once("lib/object_commons/object_checks.php");
 
 
 function r_chat_channels(RequestContext $ctx, string $args) {
+
+    $args = explode_args_into_array($args);
     
     if ($ctx->request_method == "GET") {
         $channels = db_channel_last_accessed_fetchall($ctx->session->hex_associated_user_id);
@@ -12,6 +15,21 @@ function r_chat_channels(RequestContext $ctx, string $args) {
     } else if ($ctx->request_method == "DELETE") {
         // remove channel from list
         // if groupchat leave & if last member delete
+
+        object_check_solo_arg($ctx, $args);
+        object_check_channel_exists($ctx, $args);
+        object_check_user_in_channel($ctx, $args);
+
+        $channel = $ctx->channel;
+
+        if ($channel["type"] == CHANNEL_TYPE_GROUP) {
+            db_message_new_system($channel["channelID"], $ctx->session->hex_associated_user_id, MESSAGE_TYPE_LEAVE);
+            db_channel_unbind_member($channel["channelID"], $ctx->session->hex_associated_user_id);
+        }
+        db_channel_delete_last_accessed($channel["channelID"], $ctx->session->hex_associated_user_id);
+        
+        respond_no_content();
+
     }
 
 }
@@ -102,25 +120,25 @@ function r_chat_channel(RequestContext $ctx, string $args) {
 
 
         // create channel
-        $channel_id = db_channel_new($name, $type);
+        $channel_id = db_channel_new($name, $type, $ctx->session->hex_associated_user_id);
 
         switch ($type) {
             case CHANNEL_TYPE_DM:
                 // helper to ensure the channel is only created once
                 db_channel_dm_bind_members($channel_id, $ctx->session->hex_associated_user_id, $recipient);
+
+
+                db_channel_set_last_accessed($channel_id, $ctx->session->hex_associated_user_id);
                 break;
             case CHANNEL_TYPE_GROUP:
-                // TODO: send new group message
 
-                // THIS IS TEMPORARY
-                foreach ($employees as $employee) {
-                    db_channel_set_last_accessed($channel_id, $employee);
-                }
+                db_message_new_system($channel_id, $ctx->session->hex_associated_user_id, MESSAGE_TYPE_NEW_GROUP);
+
+                db_channel_set_last_accessed_bulk($channel_id, $employees);
                 break;
         }
 
         db_channel_bind_members($channel_id, $employees);
-        db_channel_set_last_accessed($channel_id, $ctx->session->hex_associated_user_id);
 
         respond_ok(array(
             "channel_id" => $channel_id
@@ -129,11 +147,13 @@ function r_chat_channel(RequestContext $ctx, string $args) {
 }
 
 register_route(new Route(
-    ["GET", "PUT",],
+    ["GET", "DELETE"],
     "/list",
     "r_chat_channels",
     1,
-    []
+    [
+        "URL_PATH_ARGS_LEGAL"
+    ]
 ));
 
 register_route(new Route(

@@ -1,17 +1,14 @@
 <?php
 // generic tables
 
-const TASK_STATE_TODO = 0;
-const TASK_STATE_INPROGRESS = 1;
-const TASK_STATE_COMPLETED = 2;
-
 const TASK_VALID_STATES = [TASK_STATE_TODO, TASK_STATE_INPROGRESS, TASK_STATE_COMPLETED];
 
 const TAG_COLOURS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
-const FEEDBACK_STATE_NONE = 0;
-const FEEDBACK_STATE_HELPFUL = 1;
 const FEEDBACK_VALID_STATES = [FEEDBACK_STATE_NONE, FEEDBACK_STATE_HELPFUL];
+
+
+const MESSAGE_VALID_TYPES = [MESSAGE_TYPE_MESSAGE, MESSAGE_TYPE_ADDED, MESSAGE_TYPE_LEAVE, MESSAGE_TYPE_NEW_GROUP, MESSAGE_TYPE_REMOVED];
 
 
 enum NOTIFICATION_TYPE {
@@ -721,6 +718,10 @@ const TABLE_CHANNEL = new Table(
         new Column(
             "channelCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true
         ),
+        new Column(
+            "channelOwner", is_primary_key:false, type:"binary", is_nullable:false, is_editable:true, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
+        ),
     ],
     "channel",
     "channel"
@@ -766,6 +767,13 @@ const TABLE_MESSAGES = new Table(
         ),
         new Column(
             "messageCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true
+        ),
+        new Column(
+            "messageType", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new RestrictedDomainConstraint(MESSAGE_VALID_TYPES)]
+        ),
+        new Column(
+            "messageEditedAt", is_primary_key:false, type:"integer", is_nullable:true, is_editable:false, is_server_generated:true
         ),
         new Column(
             "messageContent", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
