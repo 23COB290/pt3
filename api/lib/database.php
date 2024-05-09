@@ -2500,7 +2500,7 @@ function db_number_task(string $emp_id){
 
     $bin_e_id = hex2bin($emp_id);
 
-    $query = $db->prepare("SELECT `EMPLOYEES`.firstName as empID,COUNT(`taskID`) as tasks 
+    $query = $db->prepare("SELECT `EMPLOYEES`.*,COUNT(`taskID`) as tasks 
     FROM `EMPLOYEE_TASKS` LEFT JOIN `EMPLOYEES` ON `EMPLOYEES`.empID = `EMPLOYEE_TASKS`.empID
     GROUP BY empID
     ORDER BY tasks DESC");
@@ -2514,8 +2514,8 @@ function db_number_task(string $emp_id){
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        
-        array_push($data, $row);
+        $encoded = parse_database_row($row,TABLE_EMPLOYEE_TASKS, ["tasks"=>"integer"]);
+        array_push($data, $encoded);
     }
     if (!$res) {
         respond_database_failure();
@@ -2530,7 +2530,7 @@ function db_total_employee_manhours(string $emp_id){
 
     $bin_e_id = hex2bin($emp_id);
 
-    $query = $db->prepare("SELECT `EMPLOYEES`.firstName,`EMPLOYEES`.lastName, SUM(employeeTaskManHours) as `hours` 
+    $query = $db->prepare("SELECT `EMPLOYEES`.*, SUM(employeeTaskManHours) as `hours` 
     FROM `EMPLOYEE_TASKS` LEFT JOIN `EMPLOYEES` ON `EMPLOYEE_TASKS`.empID = `EMPLOYEES`.empID
     GROUP BY `EMPLOYEE_TASKS`.empID
     ORDER BY `hours` DESC");
@@ -2543,10 +2543,11 @@ function db_total_employee_manhours(string $emp_id){
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        
-        array_push($data, $row);
+        $encoded = parse_database_row($row,TABLE_EMPLOYEE_TASKS, ["hours"=>"integer"]);
+        array_push($data, $encoded);
     }
     if (!$res) {
+        
         respond_database_failure();
     }
 
@@ -2584,7 +2585,7 @@ function db_managers_to_users(){
 function db_posts_per_author(){
     global $db; 
 
-    $query = $db->prepare("SELECT `EMPLOYEES`.firstName,`EMPLOYEES`.lastName, COUNT(postAuthor) as numposts
+    $query = $db->prepare("SELECT `EMPLOYEES`.* ,COUNT(postAuthor) as numposts
     FROM `POSTS` JOIN `EMPLOYEES` ON `POSTS`.postAuthor = `EMPLOYEES`.empID 
     GROUP BY postAuthor
     ORDER BY numposts DESC");
@@ -2597,8 +2598,8 @@ function db_posts_per_author(){
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        
-        array_push($data, $row);
+        $encoded = parse_database_row($row,TABLE_EMPLOYEES, ["numposts"=>"integer"]);
+        array_push($data, $encoded);
     }
     if (!$res) {
         respond_database_failure();
@@ -2724,5 +2725,4 @@ function db_technical_to_non(){
 
     return $data;
 }
-
 ?>

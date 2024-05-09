@@ -10,7 +10,7 @@ import * as global from "../global-ui.js";
 
 
 
-
+//
 
 
 var box = document.getElementById("api_results");
@@ -27,8 +27,8 @@ async function makeManhoursGraph(){
 
     for(var datapoint in info){
         
-        data.push(info[datapoint].hours)
-        label.push(info[datapoint].firstName +" "+ info[datapoint].lastName)
+        data.push(info[datapoint].hours/3600)
+        label.push(global.employeeToName(info[datapoint].employee))
     }
     console.log(data)
 
@@ -112,9 +112,9 @@ async function makeNumTasksGraph(){
     var label = []
 
     for(var datapoint in info){
-        console.log(info[datapoint].tasks)
+        console.log(info[datapoint])
         data.push(info[datapoint].tasks)
-        label.push(info[datapoint].empID)
+        label.push(global.employeeToName(info[datapoint].employee))
     }
     console.log(data)
 
@@ -190,9 +190,9 @@ async function makePostPerAuthorGraph(){
     var label = []
 
     for(var datapoint in info){
-        console.log(info[datapoint].tasks)
+        
         data.push(info[datapoint].numposts)
-        label.push(info[datapoint].firstName +" "+ info[datapoint].lastName)
+        label.push(global.employeeToName(info[datapoint]))
     }
     console.log(data)
 
