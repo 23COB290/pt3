@@ -1,3 +1,7 @@
+.main{
+    overflow-y: scroll;
+}
+
 .chart-box {
     transition: opacity 0.2s ease-out;
 }
