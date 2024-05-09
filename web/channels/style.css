@@ -159,6 +159,7 @@
             }
 
             .channel-input-container {
+                position: relative;
                 display: flex;
                 flex-direction: row;
                 gap: 0.25rem;
@@ -531,4 +532,11 @@
         align-self: flex-end;
     }
 
+}
+
+#editing-msg-indicator {
+    position: absolute;
+    top: -35%;
+    z-index: 1;
+    font-size: 0.75em;
 }

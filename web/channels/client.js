@@ -487,6 +487,8 @@ async function fetchAndRenderMessages(channelID) {
 
 let editingMsg = false
 let messageBeingEdited
+const editingMsgElement = document.createElement('i')
+editingMsgElement.id = 'editing-msg-indicator'
 
 //displays the selected message to the user
 async function renderMessage(message) {
@@ -637,12 +639,14 @@ async function renderMessage(message) {
         if (editingMsg) {
             document.querySelector('.editing').classList.remove('editing')
         }
+        messageElement.classList.add('editing')
         let currentMsgContent = messageElement.querySelector('.message-content').innerText
         messageInput.innerHTML = currentMsgContent
         messageInput.focus()
         editingMsg = true
-        console.log(editingMsg)
         messageBeingEdited = message
+        editingMsgElement.textContent = 'Editing message: '+currentMsgContent
+        document.querySelector('.channel-input-container').appendChild(editingMsgElement)
     });
 
     channelMessages.appendChild(messageElement);
@@ -725,8 +729,10 @@ messageInput.addEventListener("keydown", async (event) => {
             document.querySelector(`#message-${messageBeingEdited.msgID} .message-content`).innerText = content
             messageInput.textContent = "";
             editingMsg = false
+            document.querySelector('.editing').classList.remove('editing')
+            document.querySelector('.channel-input-container').removeChild(editingMsgElement)
+            document.querySelector(`#message-${messageBeingEdited.msgID}`).classList.add('edited')
             messageBeingEdited = null
-            
             return;
         }
 
