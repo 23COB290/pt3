@@ -2,7 +2,7 @@
 require("lib/context.php");
 require_once("lib/object_commons/object_route.php");
 
-const MESSAGE_MESSAGE_CHECKS = [
+const MESSAGE_CHECKS = [
     "DELETE"=>[
         "duo_arg",
         "channel_exists",
@@ -33,12 +33,21 @@ const MESSAGE_MESSAGE_CHECKS = [
 
 
 function r_chat_message(RequestContext $ctx, string $args) {
-    object_manipulation_generic(MESSAGE_MESSAGE_CHECKS, TABLE_MESSAGES, $ctx, $args);
+    object_manipulation_generic(MESSAGE_CHECKS, TABLE_MESSAGES, $ctx, $args);
 }
 
 function r_chat_messages(RequestContext $ctx, string $args) {
 
     $resource_specifiers = [$args];
+
+    $after = $_GET["after"] ?? 0;
+
+    if (!is_numeric($after)) {
+        respond_bad_request(
+            "Url query parameter 'after' is expected to be a number",
+            ERROR_QUERY_PARAMS_INVALID
+        );
+    }
 
     foreach ($resource_specifiers as $specifier) {
         if (!@hex2bin($specifier)) {
@@ -54,7 +63,7 @@ function r_chat_messages(RequestContext $ctx, string $args) {
     object_check_user_in_channel($ctx, $resource_specifiers);
 
     // needs pagination
-    $messages = db_messages_fetchall($resource_specifiers[0]);
+    $messages = db_messages_fetchall($resource_specifiers[0], $after);
     respond_ok(array(
         "messages" => $messages
     ));
@@ -66,7 +75,9 @@ function _new_message(RequestContext $ctx, array $body, array $url_specifiers) {
 
     $msgID = generate_uuid();
     $createdAt = timestamp();
+    $type = MESSAGE_TYPE_MESSAGE;
     $content = $body["messageContent"];
+    $editedAt = null;
 
 
     if (db_generic_new(
@@ -76,15 +87,18 @@ function _new_message(RequestContext $ctx, array $body, array $url_specifiers) {
             $channel_id,
             $author_id,
             $createdAt,
+            $type,
+            $editedAt,
             $content
         ],
-        "sssis"
+        "sssiiis"
     )) {
 
         $body["msgID"] = $msgID;
         $body["messageCreatedAt"] = $createdAt;
         $body["author"] = $author_id;
         $body["channelID"] = $channel_id;
+        $body["messageType"] = $type;
 
 
         db_channel_set_last_accessed_bulk(bin2hex($channel_id), $ctx->channel["members"]);
@@ -102,6 +116,8 @@ function _delete_message(RequestContext $ctx, array $url_specifiers) {
 }
 
 function _edit_message(RequestContext $ctx, array $body, array $url_specifiers) {
+
+    $body["messageEditedAt"] = timestamp();
 
     _use_common_edit(TABLE_MESSAGES, $body, $url_specifiers);
 }

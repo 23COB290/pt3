@@ -133,6 +133,9 @@
                 align-items: center;
                 gap: 0.75rem;
 
+                border-bottom: var(--border-clr) 1px solid;
+                padding-bottom: 0.5rem;
+
                 #channel-icon-wrapper {
 
                     display:flex;
@@ -240,6 +243,10 @@
         width: 2em;
         height: 2em;
     }
+
+    .owner-icon {
+        font-size: 1.5em;
+    }
 }
 
 
@@ -277,7 +284,8 @@
 
     .channel-actions {
         opacity: 0;
-
+        display: flex;
+        align-items: center;
         &:hover {
             opacity: 1 !important;
         }
@@ -440,19 +448,82 @@
     display:flex;
     flex-direction: row;
     gap: 0.5em;
-    padding: 0.5em 0;
+    padding: 0.5em 0; 
+    justify-content: space-between;
+    border-radius: 4px;
+
+    &.system {
+        .message-content-wrapper {
+            display:flex;
+            flex-direction: row;
+            gap: 0.5em;
+
+
+            .message-content {
+                align-content: center;
+                font-style: italic;
+            }
+        }
+    }
+
+    &:hover {
+        background-color: var(--make-it-all-tint)
+    }
+
+    &.edited {
+        .message-content::after {
+            content: " (edited)";
+            font-size: 0.75em;
+            opacity: 0.7;
+        }
+    }
+
+
+    .message-left-wrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5em;
+    }
 
     .message-avatar {
         width: 3rem;
         height: 3rem;
     }
 
+    
+
     .message-content-wrapper {
 
-        .message-author {
-            font-weight: 700;
-        }
+        .message-details {
+            display: flex;
+            flex-direction: row;
+            gap: 0.35em;
 
+            align-items: center;
+
+            .message-author {
+                font-weight: 700;
+            }
+    
+            .message-timestamp {
+                font-size: 0.75em;
+                opacity: 0.7;
+            }
+        }
+    }
+
+    &:hover {
+        .message-buttons {
+            opacity: 1;
+        }
+    }
+
+    .message-buttons {
+        opacity: 0;
+        display: flex;
+        flex-direction: row;
+        gap: 0.25em;
+        align-self: flex-end;
     }
 
 }

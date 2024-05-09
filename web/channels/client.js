@@ -1,6 +1,14 @@
 
 const CHANNEL_TYPE_DM = 0;
 const CHANNEL_TYPE_GROUP = 1;
+
+const MESSAGE_TYPE_MESSAGE = 0;
+const MESSAGE_TYPE_ADDED = 1;
+const MESSAGE_TYPE_LEAVE = 2;
+const MESSAGE_TYPE_NEW_GROUP = 3;
+const MESSAGE_TYPE_REMOVED = 4;
+
+import { left } from "../global-topbar.js";
 import * as global from "../global-ui.js"
 
 
@@ -173,12 +181,13 @@ async function newChannelPopup() {
     };
 
     if (channelType === CHANNEL_TYPE_GROUP) {
-        body.name = groupName.value ?? null;
+        body.name = groupName.value ? groupName.value : null;
         body.recipients = [...recipients];
     } else {
         body.recipient = [...recipients][0];
         body.name = null;
     }
+
 
     const res = await post_api("/chat/channel.php/channel", body);
 
@@ -195,7 +204,7 @@ async function newChannelPopup() {
 }
 
 
-
+// displays channel icon of chat
 function renderChannelIcon(channel) {
     switch (channel.type) {
         case CHANNEL_TYPE_DM:
@@ -225,13 +234,19 @@ function renderChannelIcon(channel) {
 function getChannelName(channel) {
     if (channel.type === CHANNEL_TYPE_DM) {
         return global.employeeToName(channel.recipient);
-    } else {
+
+    }
+
+    if (channel.name) {
         return channel.name;
     }
+
+    return channel.richMembers.map((emp) => global.employeeToName(emp)).join(", ");
+    
 }
 
-
-function renderChannelMember(emp) {
+// displays members in chat
+function renderChannelMember(emp, isOwner = false) {
 
     const name = global.employeeToName(emp);
     const avatar = global.employeeAvatarOrFallback(emp);
@@ -251,9 +266,17 @@ function renderChannelMember(emp) {
     channelMember.appendChild(avatarElem);
     channelMember.appendChild(nameElem);
 
+    if (isOwner) {
+        const icon = document.createElement('span');
+        icon.classList.add('material-symbols-rounded', 'owner-icon');
+        icon.textContent = "star";
+        channelMember.appendChild(icon);
+    }
+
     return channelMember;
 }
 
+// displays chats in chat list
 function renderChannelInList(channel, members) {
 
     const element = document.createElement('a');
@@ -285,6 +308,44 @@ function renderChannelInList(channel, members) {
 
     close.textContent = "close"
 
+    close.addEventListener('pointerup', async (e) => {
+
+        if (e.button !== 0) {
+            return;
+        }
+
+
+        if (channel.type != CHANNEL_TYPE_DM) {
+            await confirmLeave(getChannelName(channel));
+        }
+
+        const res = await delete_api(`/chat/channel.php/list/${channel.channelID}`);
+
+        if (res.success) {
+            element.remove();
+            setChannelDetailsVisiblity(false);
+            return;
+        }
+
+        global.popupAlert(
+            "Unable to delete channel",
+            `The following error occurred: ${res.error.message} (${res.error.code})`,
+            "error"
+        );
+    });
+
+    element.addEventListener('click', (event) => {
+        // stop rendering if clicked on close button
+        if (event.target === close) {
+            event.preventDefault();
+        }
+
+        // stop rendering if already selected
+        if (element.classList.contains('selected')) {
+            event.preventDefault();
+        }
+    });
+
     actions.appendChild(close);
 
     element.appendChild(icon);
@@ -301,7 +362,7 @@ async function fetchAndRenderChannels() {
     if (!res.success) {
         return;
     }
-
+    // removes chats from list
     channelList.replaceChildren();
 
     const me = (await global.getCurrentSession()).employee;
@@ -344,7 +405,7 @@ async function fetchAndRenderChannels() {
 
 fetchAndRenderChannels();
 
-
+// determines if no channel selected message appears or if channel appears
 function setChannelDetailsVisiblity(visible) {
     if (visible) {
         channelDetails.classList.remove('norender');
@@ -354,6 +415,8 @@ function setChannelDetailsVisiblity(visible) {
         channelDetails.classList.add('norender');
     }
 }
+
+
 
 async function renderIndividualChannel(channelID) {
 
@@ -365,11 +428,15 @@ async function renderIndividualChannel(channelID) {
         return;
     }
 
-    currentSelectedChannel = channel;
+    channelMessages.replaceChildren();
 
+    messageInput.setAttribute("placeholder", `Message ${name}`)
+
+    currentSelectedChannel = channel;
+    // renders messages in selected channel and scrolls to bottom
     fetchAndRenderMessages(channelID).then(scrollMessagesToBottom);
 
-
+    // displays new breadcrumb on page
     global.setBreadcrumb(["Chats", name], ["./", `#${channelID}`])
     setChannelDetailsVisiblity(true);
 
@@ -377,6 +444,7 @@ async function renderIndividualChannel(channelID) {
         elem.classList.remove('selected');
     });
 
+    // updates visual of chat on chat list
     const listElement = document.getElementById(`channel-${channelID}`);
     if (listElement) {
         listElement.classList.add('selected');
@@ -386,22 +454,26 @@ async function renderIndividualChannel(channelID) {
     channelName.textContent = name;
 
     channelIcon.replaceChildren(renderChannelIcon(channel));
-
+    // clears channel members from previous chat
     channelMembers.replaceChildren();
-
+    //adds members to channelMembers
     for (const member of channel.richMembers) {
-        channelMembers.appendChild(renderChannelMember(member));
+        channelMembers.appendChild(renderChannelMember(
+            member,
+            channel.type == CHANNEL_TYPE_GROUP && member.empID == channel.owner.empID
+        ));
     }
 
 }
 
 async function fetchAndRenderMessages(channelID) {
+    // gets messages from api for the current chat
     const res = await get_api(`/chat/message.php/messages/${channelID}`);
 
     if (!res.success) {
         return;
     }
-
+    // removes messages from previous chat from channelMessages
     channelMessages.replaceChildren();
 
     const messages = res.data.messages;
@@ -412,46 +484,175 @@ async function fetchAndRenderMessages(channelID) {
     }
 }
 
+let editingMsg = false
+let messageBeingEdited
+
+//displays the selected message to the user
 async function renderMessage(message) {
 
+    lastMessageTimestamp = message.createdAt;
+
+    if (document.getElementById(`message-${message.msgID}`)) {
+        return;
+    }
+
+    //makes the div for the message
     const messageElement = document.createElement('div');
+    messageElement.id = `message-${message.msgID}`;
     messageElement.classList.add('message');
 
+    const leftWrapper = document.createElement('div');
+    leftWrapper.classList.add('message-left-wrapper');
+
+
+    //adds the avatar to the message
     const avatar = document.createElement('img');
     avatar.src = global.employeeAvatarOrFallback(message.author);
     avatar.alt = global.employeeToName(message.author);
     avatar.classList.add('avatar', 'message-avatar');
 
+    //wrapper for the message details and content
     const contentWrapper = document.createElement('div');
     contentWrapper.classList.add('message-content-wrapper');
 
+    //details include author name, date and time
+    //TO DO: ADD DATE AND TIME
     const details = document.createElement('div');
     details.classList.add('message-details');
-
     const author = document.createElement('div');
     author.classList.add('message-author');
     author.textContent = global.employeeToName(message.author);
-
+    
     details.appendChild(author);
 
+    const createdAt = global.howLongAgo(message.createdAt);
+
+    details.appendChild(renderMessageTimestamp(createdAt));
+
+    if (message.editedAt) {
+        const editedAt = global.howLongAgo(message.editedAt);
+        details.appendChild(renderMessageTimestamp(`edited ${editedAt}`));
+        messageElement.classList.add('edited');
+    }
+
+    //content of the messages
+
+    contentWrapper.appendChild(details);
 
 
     const content = document.createElement('div');
     content.classList.add('message-content');
-    content.innerText = message.content;
 
 
-    contentWrapper.appendChild(details);
-    contentWrapper.appendChild(content);
+    if (message.type != MESSAGE_TYPE_MESSAGE) {
+        messageElement.classList.add("system")
+        details.insertBefore(content, details.childNodes[1]);
+
+    } else {
+        contentWrapper.appendChild(content);
+    }
+
+    switch (message.type) {
+        case MESSAGE_TYPE_MESSAGE:
+            content.innerText = message.content;
+            break;
+        
+        case MESSAGE_TYPE_NEW_GROUP:
+            content.innerText = "created this group"
+            break;
+        
+        case MESSAGE_TYPE_ADDED:
+            let added = "placeholder";
+            content.innerText = `added ${added} to the group`;
+            break;
+        
+        case MESSAGE_TYPE_LEAVE:
+            content.innerText = "left the group";
+            break;
+        case MESSAGE_TYPE_REMOVED:
+            let removed = "placeholder";
+            content.innerText = `removed ${removed} from the group`;
+            break;
+
+    }
 
 
-    messageElement.appendChild(avatar);
-    messageElement.appendChild(contentWrapper);
+    leftWrapper.appendChild(avatar);
+    leftWrapper.appendChild(contentWrapper);
+
+    messageElement.appendChild(leftWrapper);
+
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.classList.add('message-buttons');
+
+    // adds buttons to message e.g. edit, delete
+
+    const session = await global.getCurrentSession();
+
+    if (session.employee.empID != message.author.empID || message.type != MESSAGE_TYPE_MESSAGE) {
+        channelMessages.appendChild(messageElement);
+        return;
+    }
+
+    buttonWrapper.innerHTML = `<div class="icon-button no-box edit">
+        <div class="button-icon">
+            <span class="material-symbols-rounded">edit</span>
+        </div>
+    </div>
+    <div class="icon-button no-box delete modal-skippable">
+        <div class="button-icon">
+            <span class="material-symbols-rounded">delete</span>
+        </div>
+    </div>`
+    
+
+    messageElement.appendChild(buttonWrapper);
+
+    const deleteButton = messageElement.querySelector('.delete');
+    deleteButton.addEventListener('pointerup', async () => {
+
+
+        await confirmDelete();
+
+
+        // delete message on backend
+        const res = await delete_api(`/chat/message.php/message/${message.channel.channelID}/${message.msgID}`);
+
+        if (res.success) {
+            // remove message from browser view
+            messageElement.remove();
+            return;
+        }
+        global.popupAlert(
+            "Unable to delete message",
+            `The following error occurred: ${res.error.message} (${res.error.code})`,
+            "error"
+        );
+    });
+
+    const editButton = messageElement.querySelector('.edit');
+    editButton.addEventListener('pointerup', async () => {
+        //display edit message interface
+        let currentMsgContent = messageElement.querySelector('.message-content').innerText
+        messageInput.innerHTML = currentMsgContent
+        editingMsg = true
+        console.log(editingMsg)
+        messageBeingEdited = message
+    });
 
     channelMessages.appendChild(messageElement);
-
+    
 }
 
+function renderMessageTimestamp(text) {
+    const element = document.createElement('div');
+    element.classList.add('message-timestamp');
+    element.textContent = text;
+    return element;
+}
+
+
+// uses the breadcrumb to navigate to a chat page
 async function renderFromBreadcrumb(locations) {
 
     global.setBreadcrumb(["Chats"], ["./"])
@@ -471,37 +672,66 @@ window.addEventListener("breadcrumbnavigate", (e) => {
 });
 
 messageInput.addEventListener("keydown", async (event) => {
+    // ignore keys that aren't enter or if shift is held
     if (event.key !== "Enter" || event.shiftKey) {
         return;
     }
 
     event.preventDefault();
     
-    const content = messageInput.textContent.trim();
+    // we dont need to worry about safety as it is rendered with innerText
+    const content = messageInput.innerHTML.trim().replaceAll("<br>", "\n");
 
-    const res = await post_api(`/chat/message.php/message/${currentSelectedChannel.channelID}`, {
-        content: content
-    });
+    console.log(editingMsg)
+    if (!editingMsg) {
+        // makes api request, sends new message to server
+        const res = await post_api(`/chat/message.php/message/${currentSelectedChannel.channelID}`, {
+            content: content
+        });
 
-    if (res.success) {
-        messageInput.textContent = "";
+        // if sending is successful, display message
+        if (res.success) {
+            messageInput.textContent = "";
 
-        let message = res.data;
+            let message = res.data;
 
-        message.author = (await global.getCurrentSession()).employee;
+            message.author = (await global.getCurrentSession()).employee;
 
-        moveSelectedChannelToTop();
+            moveSelectedChannelToTop();
 
-        await renderMessage(res.data);
-        scrollMessagesToBottom();
-        return;
+            await renderMessage(res.data);
+            scrollMessagesToBottom();
+            return;
+        }
+        // display error to user
+        global.popupAlert(
+            "Unable to send message",
+            `The following error occurred: ${res.error.message} (${res.error.code})`,
+            "error"
+        );
+    } else {
+        // edit the selected message
+        const res = await patch_api(`/chat/message.php/message/${currentSelectedChannel.channelID}/${messageBeingEdited.msgID}`, {
+            content: content
+        });
+
+        // if sending is successful, change displayed message
+        if (res.success) {
+            //change content of message element.
+            document.querySelector(`#message-${messageBeingEdited.msgID} .message-content`).innerText = content
+            messageInput.textContent = "";
+            editingMsg = false
+            messageBeingEdited = null
+            return;
+        }
+
+        // display error to user
+        global.popupAlert(
+            "Unable to edit message",
+            `The following error occurred: ${res.error.message} (${res.error.code})`,
+            "error"
+        );
     }
-
-    global.popupAlert(
-        "Unable to send message",
-        `The following error occurred: ${res.error.message} (${res.error.code})`,
-        "error"
-    );
 
 });
 
@@ -515,3 +745,68 @@ function moveSelectedChannelToTop() {
         channelList.prepend(listElement);
     }
 }
+
+function confirmDelete() {
+
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+        <div class="popup-text">Are you sure you want to delete this message?</div>
+        <div class="popup-text">This will delete this message for everyone</div>
+        `
+    }
+
+    return global.popupModal(
+        true,
+        "Delete message",
+        callback,
+        {
+            text: "Delete",
+            class: "red",
+        }
+    )
+}
+
+function confirmLeave(name) {
+
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+        <div class="popup-text">You will no longer be able to see or send messages in this group chat</div>
+        `
+    }
+
+    return global.popupModal(
+        false,
+        `Leave ${name}?`,
+        callback,
+        {
+            text: "Leave",
+            class: "red",
+        }
+    )
+
+}
+
+let lastMessageTimestamp = 0;
+
+async function messageRefresher() {
+
+    // dont refresh if no channel selected
+    if (!noSelectedChannel.classList.contains('norender')) {
+        return;
+    }
+
+    const res = await get_api(`/chat/message.php/messages/${currentSelectedChannel.channelID}?after=${lastMessageTimestamp}`);
+
+    if (!res.success) {
+        return;
+    }
+
+    const messages = res.data.messages;
+
+    for (const message of messages) {
+        renderMessage(message);
+    }
+
+}
+
+setInterval(messageRefresher, 1000);
