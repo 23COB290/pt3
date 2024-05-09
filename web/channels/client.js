@@ -410,7 +410,6 @@ async function fetchAndRenderMessages(channelID) {
     for (const message of messages) {
         renderMessage(message);
     }
-
 }
 
 async function renderMessage(message) {
@@ -453,8 +452,6 @@ async function renderMessage(message) {
 
 }
 
-
-
 async function renderFromBreadcrumb(locations) {
 
     global.setBreadcrumb(["Chats"], ["./"])
@@ -472,7 +469,6 @@ async function renderFromBreadcrumb(locations) {
 window.addEventListener("breadcrumbnavigate", (e) => {
     renderFromBreadcrumb(e.locations);
 });
-
 
 messageInput.addEventListener("keydown", async (event) => {
     if (event.key !== "Enter" || event.shiftKey) {
