@@ -533,11 +533,15 @@ async function renderMessage(message) {
     const editButton = messageElement.querySelector('.edit');
     editButton.addEventListener('pointerup', async () => {
         //display edit message interface
+        if (editingMsg) {
+            document.querySelector('.editing').classList.remove('editing')
+        }
         let currentMsgContent = messageElement.querySelector('.message-content').innerText
         messageInput.innerHTML = currentMsgContent
+        messageInput.focus()
         editingMsg = true
-        console.log(editingMsg)
         messageBeingEdited = messageElement.id
+        messageElement.classList.add('editing')
     });
 
     channelMessages.appendChild(messageElement);
@@ -582,7 +586,6 @@ messageInput.addEventListener("keydown", async (event) => {
     // we dont need to worry about safety as it is rendered with innerText
     const content = messageInput.innerHTML.trim().replaceAll("<br>", "\n");
 
-    console.log(editingMsg)
     if (!editingMsg) {
         // makes api request, sends new message to server
         const res = await post_api(`/chat/message.php/message/${currentSelectedChannel.channelID}`, {
@@ -618,10 +621,13 @@ messageInput.addEventListener("keydown", async (event) => {
         // if sending is successful, change displayed message
         if (res.success) {
             //change content of message element.
+            console.log(messageBeingEdited)
             document.querySelector(`#${messageBeingEdited} .message-content`).innerText = content
+            document.querySelector(`#${messageBeingEdited}`).classList.remove('editing')
             messageInput.textContent = "";
             editingMsg = false
             messageBeingEdited = null
+            
             return;
         }
 
