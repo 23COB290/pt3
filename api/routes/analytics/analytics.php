@@ -173,5 +173,23 @@ register_route(new Route(
     "URL_PATH_ARGS_REQUIRED"]
 ));
 
+function r_get_technical_to_non(RequestContext $ctx,string $args){
+    
+
+    $posts = db_technical_to_non();
+
+    respond_ok(array(
+        "posts"=>$posts
+    ));
+}
+
+register_route(new Route(
+    ["GET"],
+    "/technical",
+    "r_get_technical_to_non",
+    AUTH_LEVEL_USER,
+    []
+));
+
 contextual_run();
 ?>

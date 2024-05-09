@@ -2583,6 +2583,33 @@ function db_overdue_to_not_tasks(string $empid){
     return $data;
 }
 
+//technical to non technical
+function db_technical_to_non(){
+    global $db; 
 
+    
+
+    $query = $db->prepare("SELECT `POSTS`.postIsTechnical , COUNT(`POSTS`.postID) as numPosts
+    FROM `POSTS`
+    GROUP BY postIsTechnical
+    ");
+
+    
+    $query->execute();
+    $res = $query->get_result();
+
+    
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        
+        array_push($data, $row);
+    }
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $data;
+}
 
 ?>

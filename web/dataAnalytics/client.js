@@ -223,20 +223,21 @@ async function makeManhourPerTask(){
     const res = await get_api("/analytics/analytics.php/manhourforemp/");
     
     var info = res.data.posts
-    box.innerHTML+=JSON.stringify(res)+"\n\n";
+    
     var data = []
 
-    var label = []
+    var label =[]
 
     for(var datapoint in info){
         
         data.push(info[datapoint].task.expectedManHours)
-    
+        label.push("Manhours")
     }
 
     const myChart = new Chart(document.getElementById("chart5"), {
         type: 'polarArea',
         data: {
+            labels:label,
             datasets: [{
                 label: 'manhours per task',
                 data: data,
@@ -250,7 +251,13 @@ async function makeManhourPerTask(){
                     'rgba(201, 203, 207, 0.2)'
                   ]
             }]
-        }
+        },
+        options: {
+            legend: {
+               display: false
+            },
+            
+       }
     });
 }
 
@@ -303,9 +310,6 @@ makeProportionOfTasksGraph();
 
 async function makeOverUnderDueGraph(){
     const res = await get_api("/analytics/analytics.php/overdue/");
-    
-   
-    
   
     var info = res.data.posts
     
@@ -345,3 +349,40 @@ async function makeOverUnderDueGraph(){
 }
 
 makeOverUnderDueGraph()
+
+async function makeTechnicalGraph(){
+    const res = await get_api("/analytics/analytics.php/technical");
+  
+    var info = res.data.posts
+
+    
+
+    
+    var data = []
+
+    var label = ["Non-technical","Technical"]
+
+    
+
+    
+
+    for(var datapoint in info){
+        
+        data.push(info[datapoint].numPosts)
+    }
+
+    const myChart = new Chart(document.getElementById("chart8"), {
+        type: 'pie',
+        data: {
+            labels: label,
+            datasets: [{
+                label: 'manhours per task',
+                data: data,
+                backgroundColor: ["rgba(245,205,188,0.7)", "rgba(188,219,245,0.7)", "rgba(188,245,188,0.7)"],
+            }]
+        }
+    });
+    
+}
+
+makeTechnicalGraph()
