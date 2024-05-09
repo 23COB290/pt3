@@ -2436,4 +2436,293 @@ function db_message_new_system(string $channel_id, string $author_id, int $type,
     return $query->insert_id;
 }
 
+
+
+
+
+
+
+
+function db_projects_per_year(){
+    global $db;
+
+    $query = $db->prepare("SELECT *  
+    FROM `PROJECTS` 
+    ORDER BY `PROJECTS`.projectCreatedAt
+    ");
+
+    $query->execute();
+
+    $res = $query->get_result();
+
+    $data = [];
+
+    while ($row = $res->fetch_assoc()) {
+        
+        array_push($data, $row);
+    }
+
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $data;
+
+    
+}
+
+function db_number_post_viewed(string $emp_id){
+    global $db;
+
+    $bin_e_id = hex2bin($emp_id);
+
+    $query = $db->prepare("SELECT `postViewAccessedAt` FROM `POST_VIEWS` ");
+
+
+    $query->execute();
+
+    $res = $query->get_result();
+
+    $row = $res->fetch_assoc();
+
+
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $row;
+}
+
+
+// need to group by empID
+function db_number_task(string $emp_id){
+    global $db; 
+
+    $bin_e_id = hex2bin($emp_id);
+
+    $query = $db->prepare("SELECT `EMPLOYEES`.firstName as empID,COUNT(`taskID`) as tasks 
+    FROM `EMPLOYEE_TASKS` LEFT JOIN `EMPLOYEES` ON `EMPLOYEES`.empID = `EMPLOYEE_TASKS`.empID
+    GROUP BY empID
+    ORDER BY tasks DESC");
+
+    //$query->bind_param("s",$bin_e_id);
+
+    $query->execute();
+    $res = $query->get_result();
+
+    //$row = $res->fetch_assoc();
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        
+        array_push($data, $row);
+    }
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $data;
+}
+
+
+function db_total_employee_manhours(string $emp_id){
+    global $db; 
+
+    $bin_e_id = hex2bin($emp_id);
+
+    $query = $db->prepare("SELECT `EMPLOYEES`.firstName,`EMPLOYEES`.lastName, SUM(employeeTaskManHours) as `hours` 
+    FROM `EMPLOYEE_TASKS` LEFT JOIN `EMPLOYEES` ON `EMPLOYEE_TASKS`.empID = `EMPLOYEES`.empID
+    GROUP BY `EMPLOYEE_TASKS`.empID
+    ORDER BY `hours` DESC");
+
+    //$query->bind_param("s",$bin_e_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        
+        array_push($data, $row);
+    }
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $data;
+}
+
+
+// managers to non managers
+function db_managers_to_users(){
+    global $db; 
+
+    $query = $db->prepare("SELECT isManager,COUNT(empID) as num
+    FROM `EMPLOYEES`
+    GROUP BY isManager ");
+
+    //$query->bind_param("s",$bin_e_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        
+        array_push($data, $row);
+    }
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $data;
+}
+
+//posts per author
+function db_posts_per_author(){
+    global $db; 
+
+    $query = $db->prepare("SELECT `EMPLOYEES`.firstName,`EMPLOYEES`.lastName, COUNT(postAuthor) as numposts
+    FROM `POSTS` JOIN `EMPLOYEES` ON `POSTS`.postAuthor = `EMPLOYEES`.empID 
+    GROUP BY postAuthor
+    ORDER BY numposts DESC");
+
+    //$query->bind_param("s",$bin_e_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        
+        array_push($data, $row);
+    }
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $data;
+}
+
+function db_manhours_per_task(string $empid){
+    global $db; 
+
+    $bin_e_id = hex2bin($empid);
+
+    $query = $db->prepare("SELECT `TASKS`.taskExpectedManHours, `TASKS`.taskID
+    FROM `EMPLOYEE_TASKS` JOIN `TASKS` ON `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID
+    WHERE `EMPLOYEE_TASKS`.empID = ?
+    ORDER BY taskExpectedManHours DESC
+    ");
+
+    $query->bind_param("s",$bin_e_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_EMPLOYEE_TASKS);
+        array_push($data, $encoded);
+    }
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $data;
+}
+
+
+//proportion of completed todo new tasks
+function db_proportion_of_tasks(string $empid){
+    global $db; 
+
+    $bin_e_id = hex2bin($empid);
+
+    $query = $db->prepare("SELECT COUNT(`TASKS`.taskID) as numtasks , `TASKS`.taskState
+    FROM `TASKS` JOIN `EMPLOYEE_TASKS` ON `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND `EMPLOYEE_TASKS`.empID = ?
+    GROUP BY `TASKS`.taskState
+    ");
+
+    $query->bind_param("s",$bin_e_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        
+        array_push($data, $row);
+    }
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $data;
+}
+
+
+// overdue-to-not overdue
+function db_overdue_to_not_tasks(string $empid){
+    global $db; 
+
+    $bin_e_id = hex2bin($empid);
+
+    $query = $db->prepare("SELECT `TASKS`.taskDueDate
+    FROM `EMPLOYEE_TASKS` JOIN `TASKS` ON `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND `EMPLOYEE_TASKS`.empID = ?
+    
+    ");
+
+    $query->bind_param("s",$bin_e_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        
+        array_push($data, $row);
+    }
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $data;
+}
+
+//technical to non technical
+function db_technical_to_non(){
+    global $db; 
+
+    
+
+    $query = $db->prepare("SELECT `POSTS`.postIsTechnical , COUNT(`POSTS`.postID) as numPosts
+    FROM `POSTS`
+    GROUP BY postIsTechnical
+    ");
+
+    
+    $query->execute();
+    $res = $query->get_result();
+
+    
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        
+        array_push($data, $row);
+    }
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    return $data;
+}
+
 ?>

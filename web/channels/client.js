@@ -482,7 +482,6 @@ async function fetchAndRenderMessages(channelID) {
     for (const message of messages) {
         renderMessage(message);
     }
-
 }
 
 let editingMsg = false
