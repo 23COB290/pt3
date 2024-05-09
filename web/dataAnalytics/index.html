@@ -28,16 +28,50 @@
 
       <div class="main" style="overflow-y: scroll;">
         <div class="container-fluid ">
-          <div class="container text-center ">
+
+          
+          <div class="container text-center">
+            <h2 class="card-title">User Specific</h2>
             <div class="row">
               <div class="col d-flex">
-                <canvas id=myChart></canvas>
+                <div class="card chart-card">
+                  <div class="card-body">
+                      <p class="card-title">Man Hours Per Task</p>
+                      <canvas id="chart5"></canvas>
+                  </div>
+                </div>
               </div>
+              
               <div class="col d-flex">
-                <canvas id="chart2"></canvas>
+                <div class="card chart-card">
+                  <div class="card-body">
+                      <p class="card-title">Ratio of overdue to not overdue tasks</p>
+                      <canvas id="chart7"></canvas>
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
+
+          
+          <div class="container text-center">
+            <h2 class="card-title">Company Wide</h2>
+            <div class="row">
+                           
               <div class="col d-flex">
-                <canvas id="chart3"></canvas>
+                <div class="card chart-card">
+                  <div class="card-body">
+                    <canvas id="chart2"></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col d-flex">
+                <div class="card chart-card">
+                  <div class="card-body">
+                    <canvas id="myChart"></canvas> // ratio of manager to employee company wide
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -45,25 +79,29 @@
           <div class="container text-center">
             <div class="row ">
               <div class="col d-flex">
-                <canvas id="chart4"></canvas>
+                <div class="card chart-card">
+                  <div class="card-body">
+                    <canvas id="chart4"></canvas>
+                  </div>
+                </div>
               </div>
-              <div class="col d-flex">
-                <canvas id="chart5"></canvas>
-              </div>
-              <div class="col d-flex">
-                <canvas id="chart6"></canvas>
-              </div>
-            </div>
-          </div>
 
-          <div class="container text-center">
-            <div class="row ">
               <div class="col d-flex">
-                <canvas id="chart7"></canvas>
+                <div class="card chart-card">
+                  <div class="card-body">
+                    <canvas id="chart8"></canvas> // ratio of techincal to nontechincal within the forum
+                  </div>
+                </div>
               </div>
+
               <div class="col d-flex">
-                <canvas id="chart8"></canvas>
+                <div class="card chart-card">
+                  <div class="card-body">
+                    <canvas id=chart3></canvas>
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
         </div>

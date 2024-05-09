@@ -32,6 +32,8 @@ async function makeManhoursGraph(){
     }
     console.log(data)
 
+    const colors = Array.from({ length: data.length }, () => randomColor());
+
     const myChart = new Chart(document.getElementById("chart2"), {
         type: 'bar',
         data: {
@@ -39,15 +41,7 @@ async function makeManhoursGraph(){
             datasets: [{
                 label: 'Manhours Per Employee',
                 data: data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    'rgba(255, 205, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(201, 203, 207, 0.2)'
-                  ]
+                backgroundColor: colors
             }]
         }
     });
@@ -118,6 +112,8 @@ async function makeNumTasksGraph(){
     }
     console.log(data)
 
+    const colors = Array.from({ length: data.length }, () => randomColor());
+
     const myChart = new Chart(document.getElementById("myChart"), {
         type: 'bar',
         data: {
@@ -125,15 +121,9 @@ async function makeNumTasksGraph(){
             datasets: [{
                 label: 'Tasks per employee',
                 data: data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    'rgba(255, 205, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(201, 203, 207, 0.2)'
-                  ]
+                backgroundColor: colors
+                     
+                  
             }]
         }
         
@@ -154,7 +144,7 @@ async function makeManagerProportionGraph(){
     for(var datapoint in info){
         data.push(info[datapoint].num)
     }
-
+    
 
     const myChart = new Chart(document.getElementById("chart3"), {
         type: 'doughnut',
@@ -196,6 +186,8 @@ async function makePostPerAuthorGraph(){
     }
     console.log(data)
 
+    const colors = Array.from({ length: data.length }, () => randomColor());
+
     const myChart = new Chart(document.getElementById("chart4"), {
         type: 'bar',
         data: {
@@ -203,15 +195,7 @@ async function makePostPerAuthorGraph(){
             datasets: [{
                 label: 'Posts per employee',
                 data: data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    'rgba(255, 205, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(201, 203, 207, 0.2)'
-                  ]
+                backgroundColor: colors
             }]
         }
     });
@@ -230,9 +214,11 @@ async function makeManhourPerTask(){
 
     for(var datapoint in info){
         
-        data.push(info[datapoint].task.expectedManHours)
+        data.push(info[datapoint].task.expectedManHours/3600)
         label.push("Manhours")
     }
+
+    const colors = Array.from({ length: data.length }, () => randomColor());
 
     const myChart = new Chart(document.getElementById("chart5"), {
         type: 'polarArea',
@@ -241,15 +227,7 @@ async function makeManhourPerTask(){
             datasets: [{
                 label: 'manhours per task',
                 data: data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    'rgba(255, 205, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(201, 203, 207, 0.2)'
-                  ]
+                backgroundColor: colors
             }]
         },
         options: {
@@ -288,19 +266,7 @@ async function makeProportionOfTasksGraph(){
         }
         
     
-    }
-
-    const myChart = new Chart(document.getElementById("chart6"), {
-        type: 'pie',
-        data: {
-            labels: label,
-            datasets: [{
-                label: 'manhours per task',
-                data: data,
-                backgroundColor: ["rgba(245,205,188,0.7)", "rgba(188,219,245,0.7)", "rgba(188,245,188,0.7)"],
-            }]
-        }
-    });
+    }   
     
 }
 
@@ -386,3 +352,44 @@ async function makeTechnicalGraph(){
 }
 
 makeTechnicalGraph()
+
+
+function randomColor() {
+    var h = Math.floor(Math.random() * 360);
+    var s = Math.floor(Math.random() * 50) + 50;
+    var l = Math.floor(Math.random() * 40) + 50;
+    
+    var rgbColor = hslToRgb(h, s, l);
+    
+    var color = `rgb(${rgbColor[0]}, ${rgbColor[1]}, ${rgbColor[2]}, 0.15)`;
+    
+    return color;
+}
+
+
+function hslToRgb(h, s, l) {
+    var c = (1 - Math.abs(2 * l - 1)) * s
+    var x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    var m = l - c / 2;
+    var rgb;
+    if (h >= 0 && h < 60) {
+        rgb = [c, x, 0];
+    } else if (h >= 60 && h < 120) {
+        rgb = [x, c, 0];
+    } else if (h >= 120 && h < 180) {
+        rgb = [0, c, x];
+    } else if (h >= 180 && h < 240) {
+        rgb = [0, x, c];
+    } else if (h >= 240 && h < 300) {
+        rgb = [x, 0, c];
+    } else {
+        rgb = [c, 0, x];
+    }
+    return [
+        Math.round((rgb[0] + m) * 255),
+        Math.round((rgb[1] + m) * 255),
+        Math.round((rgb[2] + m) * 255)
+    ];
+}
+
+

@@ -422,6 +422,41 @@ a {
     
 }
 
+.col.d-flex {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: 20px;
+}
+
+.chart-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    width: 100%;
+    margin-right: 20px;
+}
+
+.chart-card:last-child {
+    margin-right: 0;
+}
+
+.chart-card:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-weight: bold;
+    padding-bottom: 20px;
+}
+
+
 #add-metric-window  {
     gap: 0.5rem;
     padding: 18px;
