@@ -243,10 +243,7 @@ makeManhourPerTask();
 
 async function makeProportionOfTasksGraph(){
     const res = await get_api("/analytics/analytics.php/tasksstate/");
-    
-    
-    
-  
+
     var info = res.data.posts
 
     var data = []
