@@ -20,6 +20,7 @@ const channelMembers = channelDetails.querySelector('.channel-members');
 const channelIcon = channelDetails.querySelector('#channel-icon-wrapper');
 const channelMessages = channelDetails.querySelector('.channel-messages');
 const messageInput = channelDetails.querySelector('#message-input');
+const sendButton = channelDetails.querySelector('#send-button');
 
 const noSelectedChannel = document.getElementById('no-selected-channel');
 
@@ -431,6 +432,8 @@ async function renderIndividualChannel(channelID) {
     channelMessages.replaceChildren();
 
     messageInput.setAttribute("placeholder", `Message ${name}`)
+    messageInput.focus();
+    cancelEditMessage();
 
     currentSelectedChannel = channel;
     // renders messages in selected channel and scrolls to bottom
@@ -679,6 +682,10 @@ window.addEventListener("breadcrumbnavigate", (e) => {
     renderFromBreadcrumb(e.locations);
 });
 
+sendButton.addEventListener('pointerup', async () => {
+    messageInput.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+});
+
 messageInput.addEventListener("keydown", async (event) => {
     // ignore keys that aren't enter or if shift is held
     if (event.key !== "Enter" || event.shiftKey) {
@@ -795,6 +802,25 @@ function confirmLeave(name) {
     )
 
 }
+
+function cancelEditMessage() {
+    if (!editingMsg) {
+        return;
+    }
+
+    editingMsg = false
+    document.querySelector('.editing').classList.remove('editing')
+    document.querySelector('.channel-input-container').removeChild(editingMsgElement)
+    messageInput.textContent = "";
+    messageBeingEdited = null
+}
+
+document.addEventListener('keyup', (event) => {
+    if (event.key === "Escape") {
+        cancelEditMessage();
+    }
+});
+
 
 let lastMessageTimestamp = 0;
 
