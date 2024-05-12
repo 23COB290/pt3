@@ -26,11 +26,13 @@ async function makeManhoursGraph(){
     var label = []
 
     for(var datapoint in info){
-        
-        data.push(info[datapoint].hours/3600)
+        if(info[datapoint].created==null){
+            continue
+        }
+        var months = (Date.now() - info[datapoint].created)/2592000000
+        data.push((info[datapoint].hours/3600)/months)
         label.push(global.employeeToName(info[datapoint].employee))
     }
-    console.log(data)
 
     const colors = Array.from({ length: data.length }, () => randomColor());
 
@@ -39,7 +41,7 @@ async function makeManhoursGraph(){
         data: {
             labels: label,
             datasets: [{
-                label: 'Manhours Per Employee',
+                label: 'Average Manhours Per Employee Per Month',
                 data: data,
                 backgroundColor: colors
             }]
@@ -50,46 +52,11 @@ makeManhoursGraph();
 
 
 
-async function getProjectPerYear(){
-    const res = await get_api("/analytics/analytics.php/projectsyear");
-    console.log(res);
-    box.innerHTML+=JSON.stringify(res.data.posts)+"\n\n";
-    return res;
-}
 
 //getProjectPerYear();
 
 
-async function makeProjectYearGraph(){
-    const res = await get_api("/analytics/analytics.php/projectsyear");
-    var date = new Date(unix_timestamp * 1000);
 
-    var info = res.data.posts
-
-    var data = {}
-
-    var label = []
-
-    for(var datapoint in info){
-        var date = new Date(info[datapoint].projectCreatedAt * 1000);
-        if(date.getFullYear in data){
-            data.date.getFullYear+=1
-        }
-        else{
-            data.data.getFullYear
-        }
-        
-    }
-
-
-}
-
-async function getPostViewed(){
-    const res = await get_api("/analytics/analytics.php/postviewed/");
-    console.log(res);
-    box.innerHTML+=JSON.stringify(res)+"\n\n";
-    return res;
-}
 
 //getPostViewed();
 
@@ -105,12 +72,18 @@ async function makeNumTasksGraph(){
 
     var label = []
 
+    
+
     for(var datapoint in info){
-        console.log(info[datapoint])
-        data.push(info[datapoint].tasks)
+        if( info[datapoint].created==null){
+            continue
+        }
+        var months = (Date.now() - info[datapoint].created)/2592000000
+        
+        data.push(info[datapoint].tasks/months)
         label.push(global.employeeToName(info[datapoint].employee))
     }
-    console.log(data)
+   
 
     const colors = Array.from({ length: data.length }, () => randomColor());
 
@@ -119,7 +92,7 @@ async function makeNumTasksGraph(){
         data: {
             labels: label,
             datasets: [{
-                label: 'Tasks per employee',
+                label: 'Average Number Of Tasks Per Employee Per Month',
                 data: data,
                 backgroundColor: colors
                      
@@ -184,7 +157,7 @@ async function makePostPerAuthorGraph(){
         data.push(info[datapoint].numposts)
         label.push(global.employeeToName(info[datapoint]))
     }
-    console.log(data)
+  
 
     const colors = Array.from({ length: data.length }, () => randomColor());
 

@@ -2500,8 +2500,9 @@ function db_number_task(string $emp_id){
 
     $bin_e_id = hex2bin($emp_id);
 
-    $query = $db->prepare("SELECT `EMPLOYEES`.*,COUNT(`taskID`) as tasks 
+    $query = $db->prepare("SELECT `EMPLOYEES`.*,COUNT(`taskID`) as tasks, `ACCOUNTS`.accountCreatedAt as created
     FROM `EMPLOYEE_TASKS` LEFT JOIN `EMPLOYEES` ON `EMPLOYEES`.empID = `EMPLOYEE_TASKS`.empID
+    LEFT JOIN `ACCOUNTS` ON `EMPLOYEES`.empID = `ACCOUNTS`.empID
     GROUP BY empID
     ORDER BY tasks DESC");
 
@@ -2514,7 +2515,7 @@ function db_number_task(string $emp_id){
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row,TABLE_EMPLOYEE_TASKS, ["tasks"=>"integer"]);
+        $encoded = parse_database_row($row,TABLE_EMPLOYEE_TASKS, ["tasks"=>"integer","created"=>"integer"]);
         array_push($data, $encoded);
     }
     if (!$res) {
@@ -2530,8 +2531,9 @@ function db_total_employee_manhours(string $emp_id){
 
     $bin_e_id = hex2bin($emp_id);
 
-    $query = $db->prepare("SELECT `EMPLOYEES`.*, SUM(employeeTaskManHours) as `hours` 
+    $query = $db->prepare("SELECT `EMPLOYEES`.*, SUM(employeeTaskManHours) as `hours`, `ACCOUNTS`.accountCreatedAt as created
     FROM `EMPLOYEE_TASKS` LEFT JOIN `EMPLOYEES` ON `EMPLOYEE_TASKS`.empID = `EMPLOYEES`.empID
+    LEFT JOIN `ACCOUNTS` ON `EMPLOYEE_TASKS`.empID = `ACCOUNTS`.empID
     GROUP BY `EMPLOYEE_TASKS`.empID
     ORDER BY `hours` DESC");
 
@@ -2543,7 +2545,7 @@ function db_total_employee_manhours(string $emp_id){
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row,TABLE_EMPLOYEE_TASKS, ["hours"=>"integer"]);
+        $encoded = parse_database_row($row,TABLE_EMPLOYEE_TASKS, ["hours"=>"integer", "created"=>"integer"]);
         array_push($data, $encoded);
     }
     if (!$res) {
@@ -2725,4 +2727,13 @@ function db_technical_to_non(){
 
     return $data;
 }
+
+//average manhours per task
+//total number of projects part of
+// time part of company
+//number of posts on forum
+//total views of posts from emp
+//projects created
+//tasks created
+
 ?>
